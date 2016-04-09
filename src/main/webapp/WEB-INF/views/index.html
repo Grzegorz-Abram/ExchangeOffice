@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Title</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<div align="center">
+		<h1 th:text="#{welcome}">Text</h1>
+
+		<div th:if="${#httpServletRequest.remoteUser != null}">
+			<p th:text="${#httpServletRequest.remoteUser}">
+				sample_user
+			</p>
+			<a href="" th:href="@{/logout}">logout</a>
+		</div>
+	</div>
+</body>
+</html>
