@@ -15,7 +15,7 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 
-	<logger name="com.future_processing.webtask.exchangeoffice" level="DEBUG" />
+	<logger name="com.futureprocessing.webtask.exchangeoffice" level="DEBUG" />
 	<logger name="org.akhikhl.gretty" level="INFO" />
 
 </configuration>

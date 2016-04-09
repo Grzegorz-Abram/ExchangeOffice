@@ -18,6 +18,6 @@
 
 <FindBugsFilter>
 	<Match>
-		<Package name="~pl[.]jcommerce[.]d2client([.].*)?" />
+		<Package name="~com[.]futureprocessing[.]webtask[.]exchangeoffice([.].*)?" />
 	</Match>
 </FindBugsFilter>
