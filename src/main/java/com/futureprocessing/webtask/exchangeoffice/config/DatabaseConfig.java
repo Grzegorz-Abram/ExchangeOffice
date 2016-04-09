@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.futureprocessing.webtask.exchangeoffice.dao.UsersDao;
 import com.futureprocessing.webtask.exchangeoffice.dao.UsersDaoImpl;
+import com.futureprocessing.webtask.exchangeoffice.dao.WalletsDao;
+import com.futureprocessing.webtask.exchangeoffice.dao.WalletsDaoImpl;
 
 @Configuration
 @EnableTransactionManagement
@@ -64,6 +66,12 @@ public class DatabaseConfig {
     @Bean(name = "usersDao")
     public UsersDao getUsersDao(SessionFactory sessionFactory) {
         return new UsersDaoImpl(sessionFactory);
+    }
+
+    @Autowired
+    @Bean(name = "walletsDao")
+    public WalletsDao getWalletsDao(SessionFactory sessionFactory) {
+        return new WalletsDaoImpl(sessionFactory);
     }
 
 }

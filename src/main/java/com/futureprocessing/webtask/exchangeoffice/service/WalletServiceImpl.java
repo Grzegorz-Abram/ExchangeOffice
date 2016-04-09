@@ -1,5 +1,6 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,26 @@ public class WalletServiceImpl implements WalletService {
             .mapToDouble(w -> w.getValue())
             .sum();
         return valueSum;
+    }
+
+    @Override
+    public List<Wallets> initWallet(String username, List<Currency> currencies) {
+        List<Wallets> wallet = new ArrayList<>();
+
+        for (Currency entry : currencies) {
+            Wallets w = new Wallets();
+            w.setUsername(username);
+            w.setCurrency(entry.getCode());
+            w.setAmount(0);
+            wallet.add(w);
+        }
+
+        return wallet;
+    }
+
+    @Override
+    public void saveWallet(Wallets wallet) {
+        walletsDao.addToWallet(wallet);
     }
 
 }

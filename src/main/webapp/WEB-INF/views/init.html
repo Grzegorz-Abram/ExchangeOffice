@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{label.init.title}">sample_title</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+	<div>
+		<h1 th:text="#{label.init.myWalletHeader}">sample_myWalletHeader</h1>
+
+		<table>
+			<thead>
+				<tr>
+					<th th:text="#{label.init.myWallet.currencyHeader}">currencyHeader</th>
+					<th th:text="#{label.init.myWallet.amountHeader}">amountHeader</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="entry : ${currencies}">
+					<td th:text="${entry.code}"></td>
+					<td>
+							<form th:action="@{/init}" method="post" th:object="${wallet}">
+								<div>
+									<label for="currency" th:text="#{label.init.currency}">sample_currency</label> <input type="text" id="currency" name="currency" th:field="*{currency}" />
+								</div>
+								<div>
+									<label for="amount" th:text="#{label.init.amount}">sample_amount</label> <input type="text" id="amount" name="amount" th:field="*{amount}" />
+								</div>
+								<button type="submit" th:text="#{label.init.submit}">sample_submit</button>
+							</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<p />
+
+	<div>
+		<a href="index.html" th:href="@{/}" th:text="#{label.backHome}">sample_backHome</a>
+	</div>
+</body>
+</html>

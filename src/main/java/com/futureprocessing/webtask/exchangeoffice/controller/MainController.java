@@ -1,5 +1,6 @@
 package com.futureprocessing.webtask.exchangeoffice.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,6 +89,26 @@ public class MainController {
             userService.registerNewUserAccount(user);
             return "redirect:/login";
         }
+    }
+
+    @RequestMapping(value = "/init", method = RequestMethod.GET)
+    public String initWalletPage(Model model) {
+        // Authentication auth =
+        // SecurityContextHolder.getContext().getAuthentication();
+
+        List<Currency> currencies = exchangeRateService.getExchangeRate().getItems();
+
+        // List<Wallets> wallet = walletService.initWallet(auth.getName(),
+        // currencies);
+        model.addAttribute("currencies", currencies);
+
+        return "init";
+    }
+
+    @RequestMapping(value = "/init", method = RequestMethod.POST)
+    public String initWallet(@ModelAttribute("wallet") Wallets wallet) {
+        walletService.saveWallet(wallet);
+        return "redirect:/";
     }
 
     private boolean isLoggedIn() {

@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
 
@@ -31,6 +32,16 @@ public class WalletsDaoImpl implements WalletsDao {
         Criteria criteria = session.createCriteria(Wallets.class);
         criteria.add(Restrictions.eq("username", username));
         return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void addToWallet(Wallets entry) {
+        Session session = sessionFactory.openSession();
+
+        session.save(entry);
+
+        session.flush();
     }
 
 }

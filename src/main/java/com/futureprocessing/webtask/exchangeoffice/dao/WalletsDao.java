@@ -8,4 +8,6 @@ public interface WalletsDao {
 
     List<Wallets> loadWallet(String username);
 
+    void addToWallet(Wallets entry);
+
 }
