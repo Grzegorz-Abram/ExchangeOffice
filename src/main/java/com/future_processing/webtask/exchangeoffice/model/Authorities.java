@@ -1,18 +1,13 @@
 package com.future_processing.webtask.exchangeoffice.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
-@Table
 public class Authorities {
 
 	@Id
-	@Column
 	private String username;
-	@Column
 	private String authority;
 
 	public String getUsername() {

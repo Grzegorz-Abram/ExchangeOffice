@@ -1,20 +1,14 @@
 package com.future_processing.webtask.exchangeoffice.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
-@Table
 public class Users {
 
 	@Id
-	@Column
 	private String username;
-	@Column
 	private String password;
-	@Column
 	private boolean enabled;
 
 	public String getUsername() {

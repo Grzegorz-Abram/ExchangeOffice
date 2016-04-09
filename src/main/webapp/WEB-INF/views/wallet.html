@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{label.wallet.title}">sample_title</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1 th:text="#{label.wallet.header}">sample_header</h1>
+
+	<div th:if="${not #lists.isEmpty(wallet)}">
+		<table>
+			<tr th:each="entry : ${wallet}">
+				<td th:text="${entry.username}">username</td>
+				<td th:text="${entry.currency}">currency</td>
+				<td th:text="${entry.amount}">amount</td>
+			</tr>
+		</table>
+	</div>
+
+	<div th:if="${#lists.isEmpty(wallet)}">
+		<span th:text="#{message.wallet.empty}">sample_empty</span>
+	</div>
+
+	<p />
+
+	<div>
+		<a href="index.html" th:href="@{/}" th:text="#{label.backHome}">sample_backHome</a>
+	</div>
+</body>
+</html>

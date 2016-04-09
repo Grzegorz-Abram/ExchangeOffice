@@ -1,5 +1,7 @@
 package com.future_processing.webtask.exchangeoffice.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,13 +19,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.future_processing.webtask.exchangeoffice.model.Users;
+import com.future_processing.webtask.exchangeoffice.model.Wallets;
 import com.future_processing.webtask.exchangeoffice.service.UserService;
+import com.future_processing.webtask.exchangeoffice.service.WalletService;
 
 @Controller
 public class MainController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private WalletService walletService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView handleRequest() {
@@ -92,6 +99,15 @@ public class MainController {
 
 			return true;
 		}
+	}
+
+	@RequestMapping(value = "/wallet", method = RequestMethod.GET)
+	public String showWallet(Model model) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		List<Wallets> wallet = walletService.loadWallet(auth.getName());
+		model.addAttribute("wallet", wallet);
+		return "wallet";
 	}
 
 }
