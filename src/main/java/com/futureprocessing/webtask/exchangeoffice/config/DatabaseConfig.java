@@ -41,7 +41,7 @@ public class DatabaseConfig {
     public SessionFactory getSessionFactory(DataSource dataSource) {
         LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(dataSource);
         sessionBuilder.addProperties(getHibernateProperties());
-        sessionBuilder.scanPackages("com.future_processing.webtask.exchangeoffice.model");
+        sessionBuilder.scanPackages("com.futureprocessing.webtask.exchangeoffice.model");
         return sessionBuilder.buildSessionFactory();
     }
 

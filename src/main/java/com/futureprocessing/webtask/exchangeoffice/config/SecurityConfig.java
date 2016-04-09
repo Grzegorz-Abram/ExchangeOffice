@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan("com.future_processing.webtask.exchangeoffice")
+@ComponentScan("com.futureprocessing.webtask.exchangeoffice")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

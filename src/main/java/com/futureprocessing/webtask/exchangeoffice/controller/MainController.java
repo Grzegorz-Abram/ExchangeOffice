@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.futureprocessing.webtask.exchangeoffice.model.Currency;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
+import com.futureprocessing.webtask.exchangeoffice.service.ExchangeRateService;
 import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 
@@ -31,6 +33,9 @@ public class MainController {
 
     @Autowired
     private WalletService walletService;
+
+    @Autowired
+    private ExchangeRateService exchangeRateService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView handleRequest() {
@@ -105,8 +110,15 @@ public class MainController {
     public String showWallet(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        List<Wallets> wallet = walletService.loadWallet(auth.getName());
+        List<Currency> currencies = exchangeRateService.getExchangeRate().getItems();
+        model.addAttribute("currencies", currencies);
+
+        List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies);
         model.addAttribute("wallet", wallet);
+
+        double sumValue = walletService.countSumValue(wallet);
+        model.addAttribute("sumValue", sumValue);
+
         return "wallet";
     }
 

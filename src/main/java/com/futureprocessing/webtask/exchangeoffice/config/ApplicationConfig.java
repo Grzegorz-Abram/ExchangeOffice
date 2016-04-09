@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
@@ -16,7 +17,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.future_processing.webtask.exchangeoffice")
+@ComponentScan("com.futureprocessing.webtask.exchangeoffice")
 public class ApplicationConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
@@ -29,6 +30,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         templateResolver.setPrefix("/WEB-INF/views/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode("HTML");
+        templateResolver.setCharacterEncoding("UTF-8");
         return templateResolver;
     }
 
@@ -52,6 +54,11 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         messageSource.setBasenames("/WEB-INF/resources/i18n/messages");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
+    }
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
     }
 
 }
