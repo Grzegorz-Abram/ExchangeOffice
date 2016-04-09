@@ -3,14 +3,20 @@ package com.future_processing.webtask.exchangeoffice.config;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@ComponentScan("com.future_processing.webtask.exchangeoffice")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
@@ -20,8 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
             .dataSource(dataSource)
-            .withDefaultSchema()
-            .usersByUsernameQuery("select username, password from users where username = ?");
+            .usersByUsernameQuery("select username, password, enabled from users where username = ?")
+            .authoritiesByUsernameQuery("select username, authority from authorities where username = ?")
+            .passwordEncoder(new BCryptPasswordEncoder());
     }
 
 	@Override
@@ -30,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		    .authorizeRequests()
 		        .antMatchers("/resources/**").permitAll()
 		        .antMatchers("/register").permitAll()
+		        .antMatchers("/").permitAll()
 		        .anyRequest().authenticated()
 		        .and()
 			.formLogin()
@@ -43,5 +51,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			    .logoutSuccessUrl("/login?logout")
 			    .permitAll();
 	}
+	
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
 	
 }

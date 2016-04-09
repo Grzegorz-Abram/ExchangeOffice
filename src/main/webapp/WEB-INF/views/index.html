@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Title</title>
+<title th:text="#{label.index.title}">sample_title</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<div align="center">
-		<h1 th:text="#{welcome}">Text</h1>
+	<h1 th:text="#{label.index.welcome}">sample_welcome</h1>
 
-		<div th:if="${#httpServletRequest.remoteUser != null}">
-			<p th:text="${#httpServletRequest.remoteUser}">
-				sample_user
-			</p>
-			<a href="" th:href="@{/logout}">logout</a>
+	<div th:if="${#httpServletRequest.remoteUser == null}">
+		<div>
+			<a href="login.html" th:href="@{/login}" th:text="#{label.index.login}">sample_login</a>
 		</div>
+		<div>
+			<a href="register.html" th:href="@{/register}" th:text="#{label.login.register}">sample_register</a>
+		</div>
+	</div>
+
+	<div th:if="${#httpServletRequest.remoteUser != null}">
+		<p th:text="${#httpServletRequest.remoteUser}">sample_user</p>
+		<a href="login.html" th:href="@{/logout}" th:text="#{label.index.logout}">sample_logout</a>
 	</div>
 </body>
 </html>

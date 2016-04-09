@@ -7,15 +7,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-public class Users {
+public class Authorities {
 
 	@Id
 	@Column
 	private String username;
 	@Column
-	private String password;
-	@Column
-	private boolean enabled;
+	private String authority;
 
 	public String getUsername() {
 		return username;
@@ -25,20 +23,12 @@ public class Users {
 		this.username = username;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getAuthority() {
+		return authority;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setAuthority(String authority) {
+		this.authority = authority;
 	}
 
 }

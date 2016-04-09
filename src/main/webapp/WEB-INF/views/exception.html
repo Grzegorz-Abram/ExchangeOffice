@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{label.exception.title}">sample_title</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1 th:text="#{label.exception.header}">sample_header</h1>
+
+	<div>
+		<span th:text="${error}">sample_error</span>:
+	</div>
+
+	<div>
+		<span th:text="${message}">sample_message</span>
+	</div>
+
+	<div>
+		<a href="index.html" th:href="@{/}" th:text="#{label.backHome}">sample_backHome</a>
+	</div>
+</body>
+</html>

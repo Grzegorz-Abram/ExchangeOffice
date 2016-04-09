@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Registration Page</title>
+<title th:text="#{label.register.title}">sample_title</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<h1 th:text="#{label.user.registration.page.title}">Register User Account</h1>
+	<h1 th:text="#{label.register.header}">sample_header</h1>
 
-	<div sec:authorize="isAnonymous()">
-		<form th:action="@{/register}" method="post" th:object="${user}">
-			<div id="username">
-				<label for="username">Username</label>
-				<input type="text" id="username" name="username" th:field="*{username}" />
-			</div>
-			<div id="form-group-password">
-				<label for="password">Password</label>
-				<input type="password" id="password" name="password" th:field="*{password}" />
-			</div>
-			<button type="submit">Register</button>
-		</form>
+	<form th:action="@{/register}" method="post" th:object="${user}">
+		<div>
+			<label for="username" th:text="#{label.username}">sample_username</label> <input type="text" id="username" name="username" th:field="*{username}" />
+		</div>
+		<div>
+			<label for="password" th:text="#{label.password}">sample_password</label> <input type="password" id="password" name="password" th:field="*{password}" />
+		</div>
+		<button type="submit" th:text="#{label.register.submit}">sample_submit</button>
+	</form>
+
+	<div>
+		<a href="index.html" th:href="@{/}" th:text="#{label.backHome}">sample_backHome</a>
 	</div>
-	<p sec:authorize="isAuthenticated()" th:text="#{text.registration.page.authenticated.user.help}">You cannot create
-		an user account because you are already logged in.</p>
 </body>
 </html>
