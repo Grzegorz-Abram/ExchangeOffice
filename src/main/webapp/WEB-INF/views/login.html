@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<h1 th:text="#{label.login.header}">sample_header</h1>
+	<h3 th:text="#{label.login.header}">sample_header</h3>
 
 	<form th:action="@{/login}" method="post">
 		<div th:if="${error}" th:text="#{message.login.error}">sample_errorMessage</div>

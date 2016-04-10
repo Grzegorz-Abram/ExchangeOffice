@@ -16,6 +16,8 @@ public class Wallets {
     private int amount;
 
     @Transient
+    private int unit;
+    @Transient
     private float unitPrice;
     @Transient
     private float value;
@@ -42,6 +44,14 @@ public class Wallets {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public int getUnit() {
+        return unit;
+    }
+
+    public void setUnit(int unit) {
+        this.unit = unit;
     }
 
     public float getUnitPrice() {

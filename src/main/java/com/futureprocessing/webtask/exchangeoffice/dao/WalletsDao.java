@@ -10,4 +10,8 @@ public interface WalletsDao {
 
     void addToWallet(Wallets entry);
 
+    void deleteFromWallet(String username, String currency);
+
+    Wallets findWalletEntry(String username, String currency);
+
 }

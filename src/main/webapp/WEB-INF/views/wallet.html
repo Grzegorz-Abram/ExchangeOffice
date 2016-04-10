@@ -7,7 +7,7 @@
 <body>
 
 	<div>
-		<h1 th:text="#{label.wallet.currenciesHeader}">sample_currenciesHeader</h1>
+		<h3 th:text="#{label.wallet.currenciesHeader}">sample_currenciesHeader</h3>
 
 		<table>
 			<thead>
@@ -30,9 +30,13 @@
 	</div>
 
 	<div>
-		<h1 th:text="#{label.wallet.myWalletHeader}">sample_myWalletHeader</h1>
+		<h3 th:text="#{label.wallet.myWalletHeader}">sample_myWalletHeader</h3>
 
-		<table>
+		<div th:if="${#lists.isEmpty(wallet)}">
+			<a href="init.html" th:href="@{/init}" th:text="#{label.wallet.toInit}">sample_toInit</a>
+		</div>
+
+		<table th:if="${not #lists.isEmpty(wallet)}">
 			<thead>
 				<tr>
 					<th th:text="#{label.wallet.myWallet.currencyHeader}">currencyHeader</th>

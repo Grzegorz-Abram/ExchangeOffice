@@ -39,9 +39,36 @@ public class WalletsDaoImpl implements WalletsDao {
     public void addToWallet(Wallets entry) {
         Session session = sessionFactory.openSession();
 
-        session.save(entry);
+        Wallets wallet = findWalletEntry(entry.getUsername(), entry.getCurrency());
+        if (wallet == null) {
+            session.save(entry);
+        } else {
+            session.update(entry);
+        }
 
         session.flush();
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void deleteFromWallet(String username, String currency) {
+        Session session = sessionFactory.openSession();
+
+        Wallets entry = new Wallets();
+        entry.setUsername(username);
+        entry.setCurrency(currency);
+        session.delete(entry);
+
+        session.flush();
+    }
+
+    @Override
+    public Wallets findWalletEntry(String username, String currency) {
+        Session session = sessionFactory.openSession();
+        Criteria criteria = session.createCriteria(Wallets.class);
+        criteria.add(Restrictions.eq("username", username));
+        criteria.add(Restrictions.eq("currency", currency));
+        return (Wallets) criteria.uniqueResult();
     }
 
 }

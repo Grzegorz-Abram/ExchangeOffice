@@ -7,28 +7,51 @@
 <body>
 
 	<div>
-		<h1 th:text="#{label.init.myWalletHeader}">sample_myWalletHeader</h1>
+		<h3 th:text="#{label.init.addEntry}">addEntry</h3>
+
+		<form th:object="${newWallet}" th:action="@{/init/save}" action="#" method="post">
+			<table>
+				<thead>
+					<tr>
+						<th th:text="#{label.init.myWallet.currencyHeader}">currencyHeader</th>
+						<th th:text="#{label.init.myWallet.amountHeader}">amountHeader</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="entry : ${newWallet}">
+						<td><input type="text" th:field="*{currency}" /></td>
+						<td><input type="text" th:field="*{amount}" /></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div></div>
+			<button type="submit" th:text="#{label.init.submit}">sample_submit</button>
+		</form>
+	</div>
+
+	<div>
+		<h3 th:text="#{label.init.myWalletHeader}">sample_myWalletHeader</h3>
 
 		<table>
 			<thead>
 				<tr>
 					<th th:text="#{label.init.myWallet.currencyHeader}">currencyHeader</th>
 					<th th:text="#{label.init.myWallet.amountHeader}">amountHeader</th>
+					<th>Operation</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="entry : ${currencies}">
-					<td th:text="${entry.code}"></td>
+				<tr th:each="entry : ${wallet}">
+					<td th:text="${entry.currency}"></td>
+					<td th:text="${entry.amount}"></td>
 					<td>
-							<form th:action="@{/init}" method="post" th:object="${wallet}">
-								<div>
-									<label for="currency" th:text="#{label.init.currency}">sample_currency</label> <input type="text" id="currency" name="currency" th:field="*{currency}" />
-								</div>
-								<div>
-									<label for="amount" th:text="#{label.init.amount}">sample_amount</label> <input type="text" id="amount" name="amount" th:field="*{amount}" />
-								</div>
-								<button type="submit" th:text="#{label.init.submit}">sample_submit</button>
-							</form>
+						<a th:href="@{/init/edit/{username}/{currency}(username=${entry.username}, currency=${entry.currency})}">
+							<span th:text="#{label.init.myWallet.edit}"></span>
+						</a>
+						<a th:href="@{/init/delete/{username}/{currency}(username=${entry.username}, currency=${entry.currency})}">
+							<span th:text="#{label.init.myWallet.delete}"></span>
+						</a>
 					</td>
 				</tr>
 			</tbody>
@@ -38,7 +61,7 @@
 	<p />
 
 	<div>
-		<a href="index.html" th:href="@{/}" th:text="#{label.backHome}">sample_backHome</a>
+		<a href="wallet.html" th:href="@{/wallet}" th:text="#{label.init.toWallet}">sample_toWallet</a>
 	</div>
 </body>
 </html>
