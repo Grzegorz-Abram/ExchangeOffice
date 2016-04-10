@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,7 @@ import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 
 @Controller
+@ComponentScan
 public class MainController {
 
     @Autowired

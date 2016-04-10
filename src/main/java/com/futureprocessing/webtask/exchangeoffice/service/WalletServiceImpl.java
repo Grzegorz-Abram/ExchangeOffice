@@ -3,28 +3,32 @@ package com.futureprocessing.webtask.exchangeoffice.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.futureprocessing.webtask.exchangeoffice.dao.WalletsDao;
 import com.futureprocessing.webtask.exchangeoffice.model.Currency;
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
+import com.futureprocessing.webtask.exchangeoffice.model.WalletsId;
+import com.futureprocessing.webtask.exchangeoffice.repository.WalletsRepository;
 
 @Service("walletService")
+@Transactional
 public class WalletServiceImpl implements WalletService {
 
     @Autowired
-    WalletsDao walletsDao;
+    WalletsRepository walletsRepository;
 
     @Override
     public List<Wallets> loadWallet(String username) {
-        List<Wallets> wallet = walletsDao.loadWallet(username);
+        List<Wallets> wallet = walletsRepository.findByUsername(username);
         return wallet;
     }
 
     @Override
     public List<Wallets> loadWallet(String username, List<Currency> currencies) {
-        List<Wallets> wallet = walletsDao.loadWallet(username);
+        List<Wallets> wallet = walletsRepository.findByUsername(username);
         if (currencies != null) {
             for (Wallets entry : wallet) {
                 Currency currency = currencies
@@ -72,17 +76,17 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public void saveWallet(String username, Wallets wallet) {
         wallet.setUsername(username);
-        walletsDao.addToWallet(wallet);
+        walletsRepository.save(wallet);
     }
 
     @Override
     public void deleteFromWallet(String username, String currency) {
-        walletsDao.deleteFromWallet(username, currency);
+        walletsRepository.delete(new WalletsId(username, currency));
     }
 
     @Override
     public Wallets findWalletEntry(String username, String currency) {
-        return walletsDao.findWalletEntry(username, currency);
+        return walletsRepository.findOne(new WalletsId(username, currency));
     }
 
 }

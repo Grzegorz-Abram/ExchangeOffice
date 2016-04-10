@@ -11,6 +11,15 @@ public class Users {
     private String password;
     private boolean enabled;
 
+    public Users() {
+    }
+
+    public Users(String username, String password, boolean enabled) {
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+    }
+
     public String getUsername() {
         return username;
     }

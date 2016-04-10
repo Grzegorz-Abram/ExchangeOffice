@@ -22,6 +22,15 @@ public class Wallets {
     @Transient
     private Double value;
 
+    public Wallets() {
+    }
+
+    public Wallets(String username, String currency, Integer amount) {
+        this.username = username;
+        this.currency = currency;
+        this.amount = amount;
+    }
+
     public String getUsername() {
         return username;
     }

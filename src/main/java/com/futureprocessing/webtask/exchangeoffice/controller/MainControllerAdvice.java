@@ -1,4 +1,4 @@
-package com.futureprocessing.webtask.exchangeoffice.exception;
+package com.futureprocessing.webtask.exchangeoffice.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
