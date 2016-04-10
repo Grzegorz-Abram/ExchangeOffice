@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Currency;
@@ -39,32 +38,43 @@ public class MainController {
     @Autowired
     private ExchangeRateService exchangeRateService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView handleRequest() {
-        return new ModelAndView("index");
+    @RequestMapping(value = { "/", "/wallet" }, method = RequestMethod.GET)
+    public String home(Model model) {
+        if (isLoggedIn()) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+            List<Currency> currencies = exchangeRateService.getExchangeRate().getItems();
+            List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies);
+            double sumValue = walletService.countSumValue(wallet);
+
+            model.addAttribute("currencies", currencies);
+            model.addAttribute("wallet", wallet);
+            model.addAttribute("sumValue", sumValue);
+        }
+
+        return "index";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "logout", required = false) String logout) {
+    public String login(@RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "logout", required = false) String logout, Model model) {
         if (isLoggedIn()) {
-            return new ModelAndView("index");
+            return "index";
         } else {
-            ModelAndView model = new ModelAndView();
             if (error != null) {
-                model.addObject("error", true);
+                model.addAttribute("error", true);
             }
 
             if (logout != null) {
-                model.addObject("logout", true);
+                model.addAttribute("logout", true);
             }
-            model.setViewName("login");
 
-            return model;
+            return "login";
         }
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null) {
@@ -75,7 +85,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String registrationPage(Model model) {
+    public String register(Model model) {
         if (isLoggedIn()) {
             return "redirect:/";
         } else {
@@ -92,47 +102,31 @@ public class MainController {
         } else {
             userService.registerNewUserAccount(user);
 
-            return "redirect:/login";
+            return "redirect:/";
         }
     }
 
-    @RequestMapping(value = "/wallet", method = RequestMethod.GET)
-    public String showWallet(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        List<Currency> currencies = exchangeRateService.getExchangeRate().getItems();
-        List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies);
-        double sumValue = walletService.countSumValue(wallet);
-
-        model.addAttribute("currencies", currencies);
-        model.addAttribute("wallet", wallet);
-        model.addAttribute("sumValue", sumValue);
-
-        return "wallet";
-    }
-
-    @RequestMapping(value = "/init", method = RequestMethod.GET)
+    @RequestMapping(value = "/wallet/edit", method = RequestMethod.GET)
     public String initWalletPage(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        List<Wallets> wallet = walletService.loadWallet(auth.getName());
-
         model.addAttribute("newWallet", new Wallets());
-        model.addAttribute("wallet", wallet);
+        model.addAttribute("wallet", walletService.loadWallet(auth.getName()));
+        model.addAttribute("allCurrencies", exchangeRateService.getExchangeRate().getItems());
 
-        return "init";
+        return "edit";
     }
 
-    @RequestMapping(value = { "/init/save" }, method = RequestMethod.POST)
+    @RequestMapping(value = { "/wallet/save" }, method = RequestMethod.POST)
     public String saveNewWallet(@ModelAttribute("wallet") Wallets wallet, final RedirectAttributes redirectAttributes) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         walletService.saveWallet(auth.getName(), wallet);
 
-        return "redirect:/init";
+        return "redirect:/wallet/edit";
     }
 
-    @RequestMapping(value = "/init/{operation}/{username}/{currency}", method = RequestMethod.GET)
+    @RequestMapping(value = "/wallet/{operation}/{username}/{currency}", method = RequestMethod.GET)
     public String editRemoveWallet(@PathVariable("operation") String operation, @PathVariable("username") String username,
             @PathVariable("currency") String currency, final RedirectAttributes redirectAttributes, Model model) {
 
@@ -143,11 +137,12 @@ public class MainController {
         } else if (operation.equals("edit")) {
             model.addAttribute("newWallet", walletService.findWalletEntry(username, currency));
             model.addAttribute("wallet", walletService.loadWallet(auth.getName()));
+            model.addAttribute("allCurrencies", exchangeRateService.getExchangeRate().getItems());
 
-            return "init";
+            return "edit";
         }
 
-        return "redirect:/init";
+        return "redirect:/wallet/edit";
     }
 
     private boolean isLoggedIn() {

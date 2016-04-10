@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{label.edit.title}">sample_title</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+	<div>
+		<h3 th:text="#{label.edit.addEntry}">addEntry</h3>
+
+		<form th:object="${newWallet}" th:action="@{/wallet/save}" action="#" method="post">
+			<table>
+				<thead>
+					<tr>
+						<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
+						<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="entry : ${newWallet}">
+						<td><select th:field="*{currency}">
+								<option th:each="type : ${allCurrencies}" th:value="${type.code}" th:text="#{${'option.edit.' + type.code}}">currency</option>
+						</select></td>
+						<td><input type="text" th:field="*{amount}" /></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div></div>
+			<button type="submit" th:text="#{label.edit.submit}">sample_submit</button>
+		</form>
+	</div>
+
+	<div>
+		<h3 th:text="#{label.edit.myWalletHeader}">sample_myWalletHeader</h3>
+
+		<table>
+			<thead>
+				<tr>
+					<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
+					<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
+					<th>Operation</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="entry : ${wallet}">
+					<td th:text="${entry.currency}"></td>
+					<td th:text="${entry.amount}"></td>
+					<td><a th:href="@{/wallet/edit/{username}/{currency}(username=${entry.username}, currency=${entry.currency})}"> <span
+							th:text="#{label.edit.myWallet.edit}"></span>
+					</a> <a th:href="@{/wallet/delete/{username}/{currency}(username=${entry.username}, currency=${entry.currency})}"> <span
+							th:text="#{label.edit.myWallet.delete}"></span>
+					</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<p />
+
+	<div>
+		<a href="wallet.html" th:href="@{/wallet}" th:text="#{label.edit.wallet}">sample_wallet</a>
+	</div>
+</body>
+</html>

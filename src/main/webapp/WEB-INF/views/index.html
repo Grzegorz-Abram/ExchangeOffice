@@ -5,8 +5,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<h3 th:text="#{label.index.welcome}">sample_welcome</h3>
-
 	<div th:if="${#httpServletRequest.remoteUser == null}">
 		<div>
 			<a href="login.html" th:href="@{/login}" th:text="#{label.index.login}">sample_login</a>
@@ -20,11 +18,65 @@
 		<div>
 			<span th:text="${#httpServletRequest.remoteUser}">sample_user</span> <a href="login.html" th:href="@{/logout}" th:text="#{label.index.logout}">sample_logout</a>
 		</div>
+	</div>
 
-		<p />
+	<div th:if="${#httpServletRequest.remoteUser != null}">
+		<div>
+			<h3 th:text="#{label.wallet.currenciesHeader}">sample_currenciesHeader</h3>
+
+			<table>
+				<thead>
+					<tr>
+						<th th:text="#{label.wallet.currencies.currencyHeader}">currencyHeader</th>
+						<th th:text="#{label.wallet.currencies.unitHeader}">unitHeader</th>
+						<th th:text="#{label.wallet.currencies.valueHeader}">valueHeader</th>
+						<th th:text="#{label.wallet.currencies.actionsHeader}">actionsHeader</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="entry : ${currencies}">
+						<td th:text="${entry.code}"></td>
+						<td th:text="${entry.unit}"></td>
+						<td th:text="${#numbers.formatDecimal(entry.purchasePrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 
 		<div>
-			<a href="wallet.html" th:href="@{/wallet}" th:text="#{label.index.wallet}">sample_wallet</a>
+			<h3 th:text="#{label.wallet.myWalletHeader}">sample_myWalletHeader</h3>
+
+			<div th:if="${#lists.isEmpty(wallet)}">
+				<a href="edit.html" th:href="@{/wallet/edit}" th:text="#{label.wallet.edit}">sample_edit</a>
+			</div>
+
+			<table th:if="${not #lists.isEmpty(wallet)}">
+				<thead>
+					<tr>
+						<th th:text="#{label.wallet.myWallet.currencyHeader}">currencyHeader</th>
+						<th th:text="#{label.wallet.myWallet.unitPriceHeader}">unitPriceHeader</th>
+						<th th:text="#{label.wallet.myWallet.amountHeader}">amountHeader</th>
+						<th th:text="#{label.wallet.myWallet.valueHeader}">valueHeader</th>
+						<th th:text="#{label.wallet.myWallet.actionsHeader}">actionsHeader</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="entry : ${wallet}">
+						<td th:text="${entry.currency}">currency</td>
+						<td th:text="${#numbers.formatDecimal(entry.unitPrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+						<td th:text="${entry.amount}">amount</td>
+						<td th:text="${#numbers.formatDecimal(entry.value, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+						<td></td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="5"><span th:text="#{label.wallet.myWallet.summaryPLN}">summaryPLN</span>: <span
+							th:text="${#numbers.formatDecimal(sumValue, 0, 'DEFAULT', 2, 'DEFAULT')}">sumValue</span></td>
+					</tr>
+				</tfoot>
+			</table>
 		</div>
 	</div>
 </body>
