@@ -1,2 +1,10 @@
 INSERT INTO users (username, password, enabled) VALUES ('user', '$2a$10$IzWi1i14KuUu239KDpGStuuTi67bNIfzgrttFoK7o0aynENIOGIqa', true);
 INSERT INTO authorities (username, authority) VALUES ('user', 'USER');
+INSERT INTO users (username, password, enabled) VALUES ('bank', '', false);
+INSERT INTO authorities (username, authority) VALUES ('bank', '');
+INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'USD', 1000);
+INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'EUR', 1000);
+INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'CHF', 1000);
+INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'RUB', 1000);
+INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'CZK', 1000);
+INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'GBP', 1000);
