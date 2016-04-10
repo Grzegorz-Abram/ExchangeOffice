@@ -21,4 +21,6 @@ public interface WalletService {
 
     Wallets findWalletEntry(String username, String currency);
 
+    void buyCurrency(String name, Currency currency);
+
 }

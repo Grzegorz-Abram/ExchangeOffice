@@ -3,12 +3,27 @@
 <head>
 <title th:text="#{label.index.title}">sample_title</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 <script type="text/javascript">
 	setInterval("refresh();", 10000);
 
 	function refresh() {
 		window.location = location.href;
 	}
+</script>
+<script type="text/javascript">
+    window.onload = function() {
+		var buyAmount = sessionStorage.getItem('buyAmount');
+        if (buyAmount != 'undefined') $('#buyAmount').val(buyAmount);
+
+        var buyError = sessionStorage.getItem('buyError');
+        $('#buyError').innerText = buyError;
+    }
+
+    window.onbeforeunload = function() {
+        sessionStorage.setItem("buyAmount", $('#buyAmount').val());
+        sessionStorage.setItem("buyError", $('#buyError').innerText);
+    }
 </script>
 </head>
 <body>
@@ -23,7 +38,8 @@
 
 	<div th:if="${#httpServletRequest.remoteUser != null}">
 		<div>
-			<span th:text="${#httpServletRequest.remoteUser}">sample_user</span> <a href="login.html" th:href="@{/logout}" th:text="#{label.index.logout}">sample_logout</a>
+			<span th:text="${#httpServletRequest.remoteUser}">sample_user</span> <a href="login.html" th:href="@{/logout}"
+				th:text="#{label.index.logout}">sample_logout</a>
 		</div>
 
 		<div>
@@ -48,7 +64,8 @@
 							<td th:text="${entry.code}"></td>
 							<td th:text="${entry.unit}"></td>
 							<td th:text="${#numbers.formatDecimal(entry.purchasePrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
-							<td><a th:href="@{/wallet/buy/{currency}(currency=${entry.code})}"> <span th:text="#{label.wallet.currencies.buy}"></span>
+							<td><a th:href="@{/wallet/buy/{currency}(currency=${entry.code})}"> <span
+									th:text="#{label.wallet.currencies.buy}"></span>
 							</a></td>
 						</tr>
 					</tbody>
@@ -59,6 +76,19 @@
 					</tfoot>
 				</table>
 			</div>
+
+			<div th:if="${not #strings.isEmpty(buyCurrency)}">
+				<form th:action="@{/wallet/buy} + '/' + ${buyCurrency}" method="post" th:object="${currency}">
+					<div>
+						<label for="buyAmount" th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${buyCurrency}">amount</label>
+						<input type="text" id="buyAmount" name="buyAmount" th:field="*{amount}" />
+						<input type="hidden" th:field="*{code}" />
+					</div>
+					<button type="submit" th:text="#{label.wallet.currencies.buy}">buy</button>
+					<a href="login.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
+				</form>
+			</div>
+			<span th:text="${error} + '!'" id="buyError">Amount Error</span>
 		</div>
 
 		<div>
@@ -84,7 +114,8 @@
 						<td th:text="${#numbers.formatDecimal(entry.unitPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
 						<td th:text="${entry.amount}">amount</td>
 						<td th:text="${#numbers.formatDecimal(entry.value, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
-						<td><a th:href="@{/wallet/sell/{currency}(currency=${entry.currency})}"> <span th:text="#{label.wallet.myWallet.sell}"></span>
+						<td><a th:href="@{/wallet/sell/{currency}(currency=${entry.currency})}"> <span
+								th:text="#{label.wallet.myWallet.sell}"></span>
 						</a></td>
 					</tr>
 				</tbody>

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Currencies;
+import com.futureprocessing.webtask.exchangeoffice.model.Currency;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
 import com.futureprocessing.webtask.exchangeoffice.service.ExchangeRateService;
@@ -141,7 +142,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/wallet/{operation}/{currency}", method = RequestMethod.GET)
-    public String editOrDeleteWalletEntry(@PathVariable("operation") String operation, @PathVariable("currency") String currency,
+    public String operationsOnWalletEntry(@PathVariable("operation") String operation, @PathVariable("currency") String currency,
             final RedirectAttributes redirectAttributes, Model model) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -155,12 +156,57 @@ public class MainController {
 
             return "edit";
         } else if (operation.equals("sell")) {
+            model.addAttribute("sellCurrency", currency);
 
+            return "redirect:/wallet";
         } else if (operation.equals("buy")) {
+            Currencies currencies = exchangeRateService.getExchangeRate();
+            List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies.getItems());
+            Double sumValue = walletService.countSumValue(wallet);
 
+            model.addAttribute("currencies", currencies.getItems());
+            model.addAttribute("publicationDate", currencies.getPublicationDate());
+            model.addAttribute("wallet", wallet);
+            model.addAttribute("sumValue", sumValue);
+            model.addAttribute("buyCurrency", currency);
+
+            Currency newCurrency = new Currency();
+            newCurrency.setCode(currency);
+            model.addAttribute("currency", newCurrency);
+
+            return "index";
         }
 
         return "redirect:/wallet/edit";
+    }
+
+    @RequestMapping(value = { "/wallet/buy/*" }, method = RequestMethod.POST)
+    public String buyWalletEntry(@Valid Currency currency, BindingResult bindingResult, Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (bindingResult.hasErrors()) {
+            Currencies currencies = exchangeRateService.getExchangeRate();
+            List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies.getItems());
+            Double sumValue = walletService.countSumValue(wallet);
+
+            model.addAttribute("currencies", currencies.getItems());
+            model.addAttribute("publicationDate", currencies.getPublicationDate());
+            model.addAttribute("wallet", wallet);
+            model.addAttribute("sumValue", sumValue);
+            model.addAttribute("buyCurrency", currency.getCode());
+
+            Currency newCurrency = new Currency();
+            newCurrency.setCode(currency.getCode());
+            model.addAttribute("currency", newCurrency);
+
+            model.addAttribute("error", bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage());
+
+            return "index";
+        }
+
+        walletService.buyCurrency(auth.getName(), currency);
+
+        return "redirect:/";
     }
 
     private boolean isLoggedIn() {

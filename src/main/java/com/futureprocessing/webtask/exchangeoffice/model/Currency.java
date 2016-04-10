@@ -1,5 +1,9 @@
 package com.futureprocessing.webtask.exchangeoffice.model;
 
+import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 public class Currency {
 
     private String name;
@@ -8,6 +12,11 @@ public class Currency {
     private Double purchasePrice;
     private Double sellPrice;
     private Double averagePrice;
+
+    @Transient
+    @NotNull
+    @Min(1)
+    private Integer amount;
 
     public String getName() {
         return name;
@@ -55,6 +64,14 @@ public class Currency {
 
     public void setAveragePrice(Double averagePrice) {
         this.averagePrice = averagePrice;
+    }
+
+    public Integer getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Integer amount) {
+        this.amount = amount;
     }
 
 }

@@ -89,4 +89,9 @@ public class WalletServiceImpl implements WalletService {
         return walletsRepository.findOne(new WalletsId(username, currency));
     }
 
+    @Override
+    public void buyCurrency(String name, Currency currency) {
+        System.out.println(name + " is buying " + currency.getAmount() + " " + currency.getCode());
+    }
+
 }
