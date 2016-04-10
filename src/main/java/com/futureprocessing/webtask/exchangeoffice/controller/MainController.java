@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -99,7 +101,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(@ModelAttribute("user") Users user) {
+    public String saveUser(@ModelAttribute("user") Users user) {
         if (isLoggedIn()) {
             return "redirect:/";
         } else {
@@ -110,7 +112,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/wallet/edit", method = RequestMethod.GET)
-    public String initWalletPage(Model model) {
+    public String edit(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         model.addAttribute("newWallet", new Wallets());
@@ -121,16 +123,25 @@ public class MainController {
     }
 
     @RequestMapping(value = { "/wallet/save" }, method = RequestMethod.POST)
-    public String saveNewWallet(@ModelAttribute("wallet") Wallets wallet, final RedirectAttributes redirectAttributes) {
+    public String saveWalletEntry(@Valid Wallets newWallet, BindingResult bindingResult, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        walletService.saveWallet(auth.getName(), wallet);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("newWallet", new Wallets());
+            model.addAttribute("wallet", walletService.loadWallet(auth.getName()));
+            model.addAttribute("allCurrencies", exchangeRateService.getExchangeRate().getItems());
+            model.addAttribute("error", bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage());
+
+            return "edit";
+        }
+
+        walletService.saveWallet(auth.getName(), newWallet);
 
         return "redirect:/wallet/edit";
     }
 
     @RequestMapping(value = "/wallet/{operation}/{username}/{currency}", method = RequestMethod.GET)
-    public String editRemoveWallet(@PathVariable("operation") String operation, @PathVariable("username") String username,
+    public String editOrDeleteWalletEntry(@PathVariable("operation") String operation, @PathVariable("username") String username,
             @PathVariable("currency") String currency, final RedirectAttributes redirectAttributes, Model model) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

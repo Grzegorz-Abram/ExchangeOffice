@@ -32,6 +32,8 @@
 
 			<div></div>
 			<button type="submit" th:text="#{label.edit.submit}">sample_submit</button>
+			<div></div>
+			<span th:if="${not #strings.isEmpty(error)}" th:text="${error}">Amount Error</span>
 		</form>
 	</div>
 

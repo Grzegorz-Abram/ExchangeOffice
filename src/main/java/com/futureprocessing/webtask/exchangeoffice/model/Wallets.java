@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @IdClass(WalletsId.class)
@@ -13,6 +15,8 @@ public class Wallets {
     private String username;
     @Id
     private String currency;
+    @NotNull
+    @Min(1)
     private Integer amount;
 
     @Transient
