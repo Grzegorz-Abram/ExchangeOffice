@@ -45,18 +45,15 @@
 				<tr>
 					<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
 					<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
-					<th>Operation</th>
+					<th th:text="#{label.edit.myWallet.operation}">operation</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="entry : ${wallet}">
 					<td th:text="${entry.currency}"></td>
 					<td th:text="${entry.amount}"></td>
-					<td><a th:href="@{/wallet/edit/{username}/{currency}(username=${entry.username}, currency=${entry.currency})}"> <span
-							th:text="#{label.edit.myWallet.edit}"></span>
-					</a> <a th:href="@{/wallet/delete/{username}/{currency}(username=${entry.username}, currency=${entry.currency})}"> <span
-							th:text="#{label.edit.myWallet.delete}"></span>
-					</a></td>
+					<td><a th:href="@{/wallet/edit/{currency}(currency=${entry.currency})}"><span th:text="#{label.edit.myWallet.edit}"></span></a> <a
+						th:href="@{/wallet/delete/{currency}(currency=${entry.currency})}"> <span th:text="#{label.edit.myWallet.delete}"></span></a></td>
 				</tr>
 			</tbody>
 		</table>

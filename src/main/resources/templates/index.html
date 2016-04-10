@@ -48,7 +48,8 @@
 							<td th:text="${entry.code}"></td>
 							<td th:text="${entry.unit}"></td>
 							<td th:text="${#numbers.formatDecimal(entry.purchasePrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
-							<td></td>
+							<td><a th:href="@{/wallet/buy/{currency}(currency=${entry.code})}"> <span th:text="#{label.wallet.currencies.buy}"></span>
+							</a></td>
 						</tr>
 					</tbody>
 					<tfoot>
@@ -83,7 +84,8 @@
 						<td th:text="${#numbers.formatDecimal(entry.unitPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
 						<td th:text="${entry.amount}">amount</td>
 						<td th:text="${#numbers.formatDecimal(entry.value, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
-						<td></td>
+						<td><a th:href="@{/wallet/sell/{currency}(currency=${entry.currency})}"> <span th:text="#{label.wallet.myWallet.sell}"></span>
+						</a></td>
 					</tr>
 				</tbody>
 				<tfoot>

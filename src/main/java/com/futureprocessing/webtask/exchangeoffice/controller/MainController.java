@@ -140,20 +140,24 @@ public class MainController {
         return "redirect:/wallet/edit";
     }
 
-    @RequestMapping(value = "/wallet/{operation}/{username}/{currency}", method = RequestMethod.GET)
-    public String editOrDeleteWalletEntry(@PathVariable("operation") String operation, @PathVariable("username") String username,
-            @PathVariable("currency") String currency, final RedirectAttributes redirectAttributes, Model model) {
+    @RequestMapping(value = "/wallet/{operation}/{currency}", method = RequestMethod.GET)
+    public String editOrDeleteWalletEntry(@PathVariable("operation") String operation, @PathVariable("currency") String currency,
+            final RedirectAttributes redirectAttributes, Model model) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (operation.equals("delete")) {
-            walletService.deleteFromWallet(username, currency);
+            walletService.deleteFromWallet(auth.getName(), currency);
         } else if (operation.equals("edit")) {
-            model.addAttribute("newWallet", walletService.findWalletEntry(username, currency));
+            model.addAttribute("newWallet", walletService.findWalletEntry(auth.getName(), currency));
             model.addAttribute("wallet", walletService.loadWallet(auth.getName()));
             model.addAttribute("allCurrencies", exchangeRateService.getExchangeRate().getItems());
 
             return "edit";
+        } else if (operation.equals("sell")) {
+
+        } else if (operation.equals("buy")) {
+
         }
 
         return "redirect:/wallet/edit";
