@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.futureprocessing.webtask.exchangeoffice.model.Currency;
+import com.futureprocessing.webtask.exchangeoffice.model.Currencies;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
 import com.futureprocessing.webtask.exchangeoffice.service.ExchangeRateService;
@@ -43,11 +43,12 @@ public class MainController {
         if (isLoggedIn()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-            List<Currency> currencies = exchangeRateService.getExchangeRate().getItems();
-            List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies);
-            double sumValue = walletService.countSumValue(wallet);
+            Currencies currencies = exchangeRateService.getExchangeRate();
+            List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies.getItems());
+            Double sumValue = walletService.countSumValue(wallet);
 
-            model.addAttribute("currencies", currencies);
+            model.addAttribute("currencies", currencies.getItems());
+            model.addAttribute("publicationDate", currencies.getPublicationDate());
             model.addAttribute("wallet", wallet);
             model.addAttribute("sumValue", sumValue);
         }

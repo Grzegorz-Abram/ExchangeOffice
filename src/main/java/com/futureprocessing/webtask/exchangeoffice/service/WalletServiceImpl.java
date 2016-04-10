@@ -25,25 +25,32 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public List<Wallets> loadWallet(String username, List<Currency> currencies) {
         List<Wallets> wallet = walletsDao.loadWallet(username);
-        for (Wallets entry : wallet) {
-            Currency currency = currencies
-                    .stream()
-                    .filter(c -> c.getCode().equals(entry.getCurrency()))
-                    .findFirst()
-                    .get();
-            entry.setUnit(currency.getUnit());
-            entry.setUnitPrice(currency.getSellPrice());
-            entry.setValue(entry.getUnitPrice() * entry.getAmount() / entry.getUnit());
+        if (currencies != null) {
+            for (Wallets entry : wallet) {
+                Currency currency = currencies
+                        .stream()
+                        .filter(c -> c.getCode().equals(entry.getCurrency()))
+                        .findFirst()
+                        .get();
+                entry.setUnit(currency.getUnit());
+                entry.setUnitPrice(currency.getSellPrice());
+                entry.setValue(entry.getUnitPrice() * entry.getAmount() / entry.getUnit());
+            }
         }
         return wallet;
     }
 
     @Override
-    public double countSumValue(List<Wallets> wallet) {
-        double valueSum = wallet
-                .stream()
-                .mapToDouble(w -> w.getValue())
-                .sum();
+    public Double countSumValue(List<Wallets> wallet) {
+        Double valueSum;
+        try {
+            valueSum = wallet
+                    .stream()
+                    .mapToDouble(w -> w.getValue())
+                    .sum();
+        } catch (Exception e) {
+            valueSum = null;
+        }
         return valueSum;
     }
 

@@ -20,7 +20,10 @@
 				<tbody>
 					<tr th:each="entry : ${newWallet}">
 						<td><select th:field="*{currency}">
-								<option th:each="type : ${allCurrencies}" th:value="${type.code}" th:text="#{${'option.edit.' + type.code}}">currency</option>
+								<option th:if="${not #lists.isEmpty(allCurrencies)}" th:each="type : ${allCurrencies}" th:value="${type.code}"
+									th:text="#{${'option.edit.' + type.code}}">currency</option>
+								<option th:if="${#lists.isEmpty(allCurrencies)}" th:each="type : ${ {'USD', 'EUR', 'CHF', 'RUB', 'CZK', 'GBP'} }" th:value="${type}"
+									th:text="#{${'option.edit.' + type}}">currency</option>
 						</select></td>
 						<td><input type="text" th:field="*{amount}" /></td>
 					</tr>

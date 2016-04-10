@@ -11,7 +11,7 @@ public interface WalletService {
 
     List<Wallets> loadWallet(String username, List<Currency> currencies);
 
-    double countSumValue(List<Wallets> wallet);
+    Double countSumValue(List<Wallets> wallet);
 
     List<Wallets> initWallet(String username, List<Currency> currencies);
 

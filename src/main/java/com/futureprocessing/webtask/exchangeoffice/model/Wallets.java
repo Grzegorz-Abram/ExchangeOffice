@@ -13,14 +13,14 @@ public class Wallets {
     private String username;
     @Id
     private String currency;
-    private int amount;
+    private Integer amount;
 
     @Transient
-    private int unit;
+    private Integer unit;
     @Transient
-    private float unitPrice;
+    private Double unitPrice;
     @Transient
-    private float value;
+    private Double value;
 
     public String getUsername() {
         return username;
@@ -38,35 +38,35 @@ public class Wallets {
         this.currency = currency;
     }
 
-    public int getAmount() {
+    public Integer getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(Integer amount) {
         this.amount = amount;
     }
 
-    public int getUnit() {
+    public Integer getUnit() {
         return unit;
     }
 
-    public void setUnit(int unit) {
+    public void setUnit(Integer unit) {
         this.unit = unit;
     }
 
-    public float getUnitPrice() {
+    public Double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(float unitPrice) {
+    public void setUnitPrice(Double unitPrice) {
         this.unitPrice = unitPrice;
     }
 
-    public float getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

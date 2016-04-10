@@ -9,11 +9,19 @@ public class Currencies {
     private List<Currency> items;
 
     public Date getPublicationDate() {
-        return new Date(publicationDate.getTime());
+        if (publicationDate == null) {
+            return null;
+        } else {
+            return new Date(publicationDate.getTime());
+        }
     }
 
     public void setPublicationDate(Date publicationDate) {
-        this.publicationDate = new Date(publicationDate.getTime());
+        if (publicationDate == null) {
+            this.publicationDate = null;
+        } else {
+            this.publicationDate = new Date(publicationDate.getTime());
+        }
     }
 
     public List<Currency> getItems() {

@@ -4,10 +4,10 @@ public class Currency {
 
     private String name;
     private String code;
-    private int unit;
-    private float purchasePrice;
-    private float sellPrice;
-    private float averagePrice;
+    private Integer unit;
+    private Double purchasePrice;
+    private Double sellPrice;
+    private Double averagePrice;
 
     public String getName() {
         return name;
@@ -25,35 +25,35 @@ public class Currency {
         this.code = code;
     }
 
-    public int getUnit() {
+    public Integer getUnit() {
         return unit;
     }
 
-    public void setUnit(int unit) {
+    public void setUnit(Integer unit) {
         this.unit = unit;
     }
 
-    public float getPurchasePrice() {
+    public Double getPurchasePrice() {
         return purchasePrice;
     }
 
-    public void setPurchasePrice(float purchasePrice) {
+    public void setPurchasePrice(Double purchasePrice) {
         this.purchasePrice = purchasePrice;
     }
 
-    public float getSellPrice() {
+    public Double getSellPrice() {
         return sellPrice;
     }
 
-    public void setSellPrice(float sellPrice) {
+    public void setSellPrice(Double sellPrice) {
         this.sellPrice = sellPrice;
     }
 
-    public float getAveragePrice() {
+    public Double getAveragePrice() {
         return averagePrice;
     }
 
-    public void setAveragePrice(float averagePrice) {
+    public void setAveragePrice(Double averagePrice) {
         this.averagePrice = averagePrice;
     }
 
