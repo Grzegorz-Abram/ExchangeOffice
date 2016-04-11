@@ -63,7 +63,7 @@ public class SpringBootApplication {
 
             walletsRepository.save(new Wallets(username, "PLN", environment.getRequiredProperty("default.user.amount.PLN", Double.class)));
             walletsRepository.save(new Wallets(bank, "PLN", environment.getRequiredProperty("default.bank.amount.PLN", Double.class)));
-            
+
             walletsRepository.save(new Wallets(bank, "USD", environment.getRequiredProperty("default.bank.amount.USD", Double.class)));
             walletsRepository.save(new Wallets(bank, "EUR", environment.getRequiredProperty("default.bank.amount.EUR", Double.class)));
             walletsRepository.save(new Wallets(bank, "CHF", environment.getRequiredProperty("default.bank.amount.CHF", Double.class)));

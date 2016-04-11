@@ -1,6 +1,7 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
 import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -102,8 +103,6 @@ public class WalletServiceImpl implements WalletService {
 
         logger.debug("    BANK: " + cashFromBank.getAmount() + " " + cashFromBank.getCurrency());
 
-        // Obca waluta z banku jest na ladzie
-
         Wallets plnFromUser = findWalletEntry(username, "PLN");
         currency.setSellPrice(exchangeRateService.getExchangeRate().getItems().stream()
                 .filter(c -> c.getCode().equals(currency.getCode()))
@@ -125,8 +124,6 @@ public class WalletServiceImpl implements WalletService {
 
         logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency());
 
-        // PLN użytkownika jest na ladzie
-
         Wallets plnFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), "PLN");
 
         logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency() + " <- "
@@ -137,8 +134,6 @@ public class WalletServiceImpl implements WalletService {
 
         logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency());
 
-        // Bank wziął PLN użytkownika
-
         Wallets cashFromUser = findWalletEntry(username, currency.getCode());
 
         logger.debug("    USER: " + cashFromUser.getAmount() + " " + cashFromUser.getCurrency() + " <- " + currency.getAmount() + " " + currency.getCode());
@@ -148,7 +143,6 @@ public class WalletServiceImpl implements WalletService {
 
         logger.debug("    USER: " + cashFromUser.getAmount() + " " + cashFromUser.getCurrency());
         logger.debug("=== END ===");
-        // Użytkownik wziął obcą walutę
     }
 
     @Override
@@ -169,8 +163,6 @@ public class WalletServiceImpl implements WalletService {
         walletsRepository.save(cashFromUser);
 
         logger.debug("    USER: " + cashFromUser.getAmount() + " " + cashFromUser.getCurrency());
-
-        // Obca waluta użytkownika jest na ladzie
 
         Wallets plnFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), "PLN");
         currency.setPurchasePrice(exchangeRateService.getExchangeRate().getItems().stream()
@@ -193,8 +185,6 @@ public class WalletServiceImpl implements WalletService {
 
         logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency());
 
-        // PLN banku jest na ladzie
-
         Wallets plnFromUser = findWalletEntry(username, "PLN");
 
         logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency() + " <- "
@@ -205,8 +195,6 @@ public class WalletServiceImpl implements WalletService {
 
         logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency());
 
-        // Użytkownik wziął PLN banku
-
         Wallets cashFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), currency.getCode());
 
         logger.debug("    BANK: " + cashFromBank.getAmount() + " " + cashFromBank.getCurrency() + " <- " + currency.getAmount() + " " + currency.getCode());
@@ -216,7 +204,6 @@ public class WalletServiceImpl implements WalletService {
 
         logger.debug("    BANK: " + cashFromBank.getAmount() + " " + cashFromBank.getCurrency());
         logger.debug("=== END ===");
-        // Bank wziął obcą walutę
     }
 
 }

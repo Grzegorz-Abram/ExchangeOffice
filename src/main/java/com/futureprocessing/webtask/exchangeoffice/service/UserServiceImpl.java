@@ -17,7 +17,7 @@ import com.futureprocessing.webtask.exchangeoffice.repository.UsersRepository;
 @Transactional
 @PropertySource(value = "classpath:application.default.properties")
 public class UserServiceImpl implements UserService {
-    
+
     @Autowired
     private Environment environment;
 
