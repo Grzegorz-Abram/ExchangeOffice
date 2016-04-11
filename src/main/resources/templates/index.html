@@ -125,7 +125,7 @@
 							<label th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${currencyToSell.code}">amount</label> <input type="text" id="sellAmount"
 								th:field="${currencyToSell.amount}" />
 						</div>
-						<input type="hidden" th:field="${currencyToSell.code}" />
+						<input type="hidden" th:field="${currencyToSell.code}" /> <input type="hidden" th:field="${currencyToSell.unit}" />
 						<button type="submit" th:text="#{label.wallet.currencies.sell}">sell</button>
 						<a href="index.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
 					</form>

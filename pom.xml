@@ -384,11 +384,6 @@
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.rometools</groupId>
-			<artifactId>rome-utils</artifactId>
-			<version>1.5.0</version>
-		</dependency>
 	</dependencies>
 
 	<repositories>

@@ -74,14 +74,14 @@ public class WalletController {
 
             Currency newCurrency = new Currency();
             newCurrency.setCode(currency);
+            newCurrency.setUnit(exchangeRateController.getCurrencies().stream()
+                    .filter(c -> c.getCode().equals(currency))
+                    .findFirst().get()
+                    .getUnit());
 
             if (operation.equals("sell")) {
                 model.addAttribute("currencyToSell", newCurrency);
             } else if (operation.equals("buy")) {
-                newCurrency.setUnit(exchangeRateController.getCurrencies().stream()
-                        .filter(c -> c.getCode().equals(currency))
-                        .findFirst().get()
-                        .getUnit());
                 model.addAttribute("currencyToBuy", newCurrency);
             }
 
@@ -127,6 +127,7 @@ public class WalletController {
         model.addAttribute("publicationDate", exchangeRateController.getCurrenciesPublicationDate());
         model.addAttribute("wallet", wallet.stream()
                 .filter(w -> !w.getCurrency().equals("PLN"))
+                .filter(w -> w.getAmount() > 0.0)
                 .collect(Collectors.toList()));
         model.addAttribute("amountPLN", wallet.stream()
                 .filter(w -> w.getCurrency().equals("PLN"))
@@ -142,6 +143,7 @@ public class WalletController {
         model.addAttribute("newWallet", walletService.findWalletEntry(userController.getUsername(), currency));
         model.addAttribute("wallet", walletService.loadWallet(userController.getUsername()).stream()
                 .filter(w -> !w.getCurrency().equals("PLN"))
+                .filter(w -> w.getAmount() > 0.0)
                 .collect(Collectors.toList()));
         model.addAttribute("allCurrencies", exchangeRateController.getCurrencies());
     }

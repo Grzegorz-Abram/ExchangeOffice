@@ -61,15 +61,15 @@ public class SpringBootApplication {
             authoritiesRepository.save(new Authorities(username, role));
             authoritiesRepository.save(new Authorities(bank, null));
 
-            walletsRepository.save(new Wallets(username, "PLN", environment.getRequiredProperty("default.user.amount.PLN", Integer.class)));
-            walletsRepository.save(new Wallets(bank, "PLN", environment.getRequiredProperty("default.bank.amount.PLN", Integer.class)));
+            walletsRepository.save(new Wallets(username, "PLN", environment.getRequiredProperty("default.user.amount.PLN", Double.class)));
+            walletsRepository.save(new Wallets(bank, "PLN", environment.getRequiredProperty("default.bank.amount.PLN", Double.class)));
             
-            walletsRepository.save(new Wallets(bank, "USD", environment.getRequiredProperty("default.bank.amount.USD", Integer.class)));
-            walletsRepository.save(new Wallets(bank, "EUR", environment.getRequiredProperty("default.bank.amount.EUR", Integer.class)));
-            walletsRepository.save(new Wallets(bank, "CHF", environment.getRequiredProperty("default.bank.amount.CHF", Integer.class)));
-            walletsRepository.save(new Wallets(bank, "RUB", environment.getRequiredProperty("default.bank.amount.RUB", Integer.class)));
-            walletsRepository.save(new Wallets(bank, "CZK", environment.getRequiredProperty("default.bank.amount.CZK", Integer.class)));
-            walletsRepository.save(new Wallets(bank, "GBP", environment.getRequiredProperty("default.bank.amount.GBP", Integer.class)));
+            walletsRepository.save(new Wallets(bank, "USD", environment.getRequiredProperty("default.bank.amount.USD", Double.class)));
+            walletsRepository.save(new Wallets(bank, "EUR", environment.getRequiredProperty("default.bank.amount.EUR", Double.class)));
+            walletsRepository.save(new Wallets(bank, "CHF", environment.getRequiredProperty("default.bank.amount.CHF", Double.class)));
+            walletsRepository.save(new Wallets(bank, "RUB", environment.getRequiredProperty("default.bank.amount.RUB", Double.class)));
+            walletsRepository.save(new Wallets(bank, "CZK", environment.getRequiredProperty("default.bank.amount.CZK", Double.class)));
+            walletsRepository.save(new Wallets(bank, "GBP", environment.getRequiredProperty("default.bank.amount.GBP", Double.class)));
         };
     }
 

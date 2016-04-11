@@ -17,7 +17,7 @@ public class Wallets {
     private String currency;
     @NotNull
     @Min(0)
-    private Integer amount;
+    private Double amount;
 
     @Transient
     private Integer unit;
@@ -29,7 +29,7 @@ public class Wallets {
     public Wallets() {
     }
 
-    public Wallets(String username, String currency, Integer amount) {
+    public Wallets(String username, String currency, Double amount) {
         this.username = username;
         this.currency = currency;
         this.amount = amount;
@@ -51,11 +51,11 @@ public class Wallets {
         this.currency = currency;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

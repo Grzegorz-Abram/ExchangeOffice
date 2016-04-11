@@ -28,6 +28,9 @@ public class WalletServiceImpl implements WalletService {
     @Autowired
     WalletsRepository walletsRepository;
 
+    @Autowired
+    private ExchangeRateService exchangeRateService;
+
     @Override
     public List<Wallets> loadWallet(String username) {
         return loadWalletWithPrices(username, null);
@@ -74,7 +77,7 @@ public class WalletServiceImpl implements WalletService {
             wallets = new Wallets();
             wallets.setUsername(username);
             wallets.setCurrency(currency);
-            wallets.setAmount(0);
+            wallets.setAmount(0.0);
         }
 
         return wallets;
@@ -82,36 +85,138 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void buyCurrency(String username, Currency currency) {
+        logger.debug("=== START ===");
+
         Wallets cashFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), currency.getCode());
 
+        logger.debug("    BANK: " + cashFromBank.getAmount() + " " + cashFromBank.getCurrency() + " -> " + currency.getAmount() + " " + currency.getCode());
+
         if (cashFromBank.getAmount() <= 0 || cashFromBank.getAmount() < currency.getAmount()) {
-            logger.error("    Can't buy!");
+            logger.debug("    USER can't buy " + currency.getAmount() + " " + currency.getCode() + " from BANK");
+            logger.debug("=== END ===");
             return;
         }
 
         cashFromBank.setAmount(cashFromBank.getAmount() - currency.getAmount());
         walletsRepository.save(cashFromBank);
 
+        logger.debug("    BANK: " + cashFromBank.getAmount() + " " + cashFromBank.getCurrency());
+
+        // Obca waluta z banku jest na ladzie
+
+        Wallets plnFromUser = findWalletEntry(username, "PLN");
+        currency.setPurchasePrice(exchangeRateService.getExchangeRate().getItems().stream()
+                .filter(c -> c.getCode().equals(currency.getCode()))
+                .findFirst().get()
+                .getPurchasePrice());
+
+        logger.debug("    Actual purchase price: " + currency.getUnit() + " " + currency.getCode() + " = " + currency.getPurchasePrice() + " PLN");
+        logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency() + " -> "
+                + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()) + " " + plnFromUser.getCurrency());
+
+        if (plnFromUser.getAmount() <= 0 || plnFromUser.getAmount() < (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit())) {
+            logger.debug("    USER can't buy currencies for " + (currency.getAmount() * currency.getPurchasePrice()) + " PLN");
+            logger.debug("=== END ===");
+            return;
+        }
+
+        plnFromUser.setAmount(plnFromUser.getAmount() - (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()));
+        walletsRepository.save(plnFromUser);
+
+        logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency());
+
+        // PLN użytkownika jest na ladzie
+
+        Wallets plnFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), "PLN");
+
+        logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency() + " <- "
+                + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()) + " " + plnFromBank.getCurrency());
+
+        plnFromBank.setAmount(plnFromBank.getAmount() + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()));
+        walletsRepository.save(plnFromBank);
+
+        logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency());
+
+        // Bank wziął PLN użytkownika
+
         Wallets cashFromUser = findWalletEntry(username, currency.getCode());
+
+        logger.debug("    USER: " + cashFromUser.getAmount() + " " + cashFromUser.getCurrency() + " <- " + currency.getAmount() + " " + currency.getCode());
+
         cashFromUser.setAmount(cashFromUser.getAmount() + currency.getAmount());
         walletsRepository.save(cashFromUser);
+
+        logger.debug("    USER: " + cashFromUser.getAmount() + " " + cashFromUser.getCurrency());
+        logger.debug("=== END ===");
+        // Użytkownik wziął obcą walutę
     }
 
     @Override
     public void sellCurrency(String username, Currency currency) {
+        logger.debug("=== START ===");
+
         Wallets cashFromUser = findWalletEntry(username, currency.getCode());
 
+        logger.debug("    USER: " + cashFromUser.getAmount() + " " + cashFromUser.getCurrency() + " -> " + currency.getAmount() + " " + currency.getCode());
+
         if (cashFromUser.getAmount() <= 0 || cashFromUser.getAmount() < currency.getAmount()) {
-            logger.error("    Can't sell!");
+            logger.debug("    USER can't sell " + currency.getAmount() + " " + currency.getCode() + " to BANK");
+            logger.debug("=== END ===");
             return;
         }
 
         cashFromUser.setAmount(cashFromUser.getAmount() - currency.getAmount());
         walletsRepository.save(cashFromUser);
 
+        logger.debug("    USER: " + cashFromUser.getAmount() + " " + cashFromUser.getCurrency());
+
+        // Obca waluta użytkownika jest na ladzie
+
+        Wallets plnFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), "PLN");
+        currency.setSellPrice(exchangeRateService.getExchangeRate().getItems().stream()
+                .filter(c -> c.getCode().equals(currency.getCode()))
+                .findFirst().get()
+                .getSellPrice());
+
+        logger.debug("    Actual sell price: " + currency.getUnit() + " " + currency.getCode() + " = " + currency.getSellPrice() + " PLN");
+        logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency() + " -> "
+                + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()) + " " + plnFromBank.getCurrency());
+
+        if (plnFromBank.getAmount() <= 0 || plnFromBank.getAmount() < (currency.getAmount() * currency.getSellPrice() / currency.getUnit())) {
+            logger.debug("    USER can't sell currencies for " + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()) + " PLN");
+            logger.debug("=== END ===");
+            return;
+        }
+
+        plnFromBank.setAmount(plnFromBank.getAmount() - (currency.getAmount() * currency.getSellPrice() / currency.getUnit()));
+        walletsRepository.save(plnFromBank);
+
+        logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency());
+
+        // PLN banku jest na ladzie
+
+        Wallets plnFromUser = findWalletEntry(username, "PLN");
+
+        logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency() + " <- "
+                + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()) + " " + plnFromUser.getCurrency());
+
+        plnFromUser.setAmount(plnFromUser.getAmount() + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()));
+        walletsRepository.save(plnFromUser);
+
+        logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency());
+
+        // Użytkownik wziął PLN banku
+
         Wallets cashFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), currency.getCode());
+
+        logger.debug("    BANK: " + cashFromBank.getAmount() + " " + cashFromBank.getCurrency() + " <- " + currency.getAmount() + " " + currency.getCode());
+
         cashFromBank.setAmount(cashFromBank.getAmount() + currency.getAmount());
         walletsRepository.save(cashFromBank);
+
+        logger.debug("    BANK: " + cashFromBank.getAmount() + " " + cashFromBank.getCurrency());
+        logger.debug("=== END ===");
+        // Bank wziął obcą walutę
     }
 
 }
