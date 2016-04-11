@@ -17,8 +17,8 @@ public interface WalletService {
 
     Wallets findWalletEntry(String username, String currency);
 
-    void buyCurrency(String name, Currency currency);
+    void buyCurrency(String name, Currency currency) throws Exception;
 
-    void sellCurrency(String name, Currency currency);
+    void sellCurrency(String name, Currency currency) throws Exception;
 
 }

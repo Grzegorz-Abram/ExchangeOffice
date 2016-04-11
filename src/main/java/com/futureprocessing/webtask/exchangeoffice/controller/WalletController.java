@@ -101,7 +101,15 @@ public class WalletController {
         }
 
         currency.setAmount(currency.getAmount() * currency.getUnit());
-        walletService.buyCurrency(userController.getUsername(), currency);
+
+        try {
+            walletService.buyCurrency(userController.getUsername(), currency);
+        } catch (Exception e) {
+            prepareIndexPage(model);
+            addErrorAttribute(model, e);
+            model.addAttribute("currencyToBuy", currency);
+            return "index";
+        }
 
         return "redirect:/";
     }
@@ -115,7 +123,14 @@ public class WalletController {
             return "index";
         }
 
-        walletService.sellCurrency(userController.getUsername(), currency);
+        try {
+            walletService.sellCurrency(userController.getUsername(), currency);
+        } catch (Exception e) {
+            prepareIndexPage(model);
+            addErrorAttribute(model, e);
+            model.addAttribute("currencyToSell", currency);
+            return "index";
+        }
 
         return "redirect:/";
     }
@@ -150,6 +165,10 @@ public class WalletController {
 
     void addErrorAttribute(Model model, BindingResult bindingResult) {
         model.addAttribute("error", bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage());
+    }
+
+    void addErrorAttribute(Model model, Exception e) {
+        model.addAttribute("error", e.getMessage());
     }
 
 }

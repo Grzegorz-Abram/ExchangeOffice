@@ -85,7 +85,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void buyCurrency(String username, Currency currency) {
+    public void buyCurrency(String username, Currency currency) throws Exception {
         logger.debug("=== START ===");
 
         Wallets cashFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), currency.getCode());
@@ -95,7 +95,7 @@ public class WalletServiceImpl implements WalletService {
         if (cashFromBank.getAmount() <= 0 || cashFromBank.getAmount() < currency.getAmount()) {
             logger.debug("    USER can't buy " + currency.getAmount() + " " + currency.getCode() + " from BANK");
             logger.debug("=== END ===");
-            return;
+            throw new Exception("You want to buy too much...");
         }
 
         cashFromBank.setAmount(cashFromBank.getAmount() - currency.getAmount());
@@ -116,7 +116,7 @@ public class WalletServiceImpl implements WalletService {
         if (plnFromUser.getAmount() <= 0 || plnFromUser.getAmount() < (currency.getAmount() * currency.getSellPrice() / currency.getUnit())) {
             logger.debug("    USER can't buy currencies for " + (currency.getAmount() * currency.getSellPrice()) + " PLN");
             logger.debug("=== END ===");
-            return;
+            throw new Exception("You don't have enough money to pay...");
         }
 
         plnFromUser.setAmount(plnFromUser.getAmount() - (currency.getAmount() * currency.getSellPrice() / currency.getUnit()));
@@ -146,7 +146,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void sellCurrency(String username, Currency currency) {
+    public void sellCurrency(String username, Currency currency) throws Exception {
         logger.debug("=== START ===");
 
         Wallets cashFromUser = findWalletEntry(username, currency.getCode());
@@ -156,7 +156,7 @@ public class WalletServiceImpl implements WalletService {
         if (cashFromUser.getAmount() <= 0 || cashFromUser.getAmount() < currency.getAmount()) {
             logger.debug("    USER can't sell " + currency.getAmount() + " " + currency.getCode() + " to BANK");
             logger.debug("=== END ===");
-            return;
+            throw new Exception("You want to sell too much...");
         }
 
         cashFromUser.setAmount(cashFromUser.getAmount() - currency.getAmount());
@@ -177,7 +177,7 @@ public class WalletServiceImpl implements WalletService {
         if (plnFromBank.getAmount() <= 0 || plnFromBank.getAmount() < (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit())) {
             logger.debug("    USER can't sell currencies for " + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()) + " PLN");
             logger.debug("=== END ===");
-            return;
+            throw new Exception("It would be too expensive for buyer...");
         }
 
         plnFromBank.setAmount(plnFromBank.getAmount() - (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()));
