@@ -82,41 +82,36 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void buyCurrency(String username, Currency currency) {
-        String bank = environment.getRequiredProperty("default.bank.username");
+        Wallets cashFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), currency.getCode());
 
-        logger.debug(username + " is buying " + currency.getAmount() + " " + currency.getCode());
-
-        Wallets requestedWalletEntry = findWalletEntry(bank, currency.getCode());
-        int amountInBank = requestedWalletEntry.getAmount();
-        logger.debug("    Amount of " + currency.getCode() + " in bank before transaction: " + amountInBank);
-
-        if (amountInBank <= 0 || amountInBank < currency.getAmount()) {
+        if (cashFromBank.getAmount() <= 0 || cashFromBank.getAmount() < currency.getAmount()) {
             logger.error("    Can't buy!");
             return;
         }
 
-        requestedWalletEntry.setAmount(amountInBank - currency.getAmount());
-        walletsRepository.save(requestedWalletEntry);
+        cashFromBank.setAmount(cashFromBank.getAmount() - currency.getAmount());
+        walletsRepository.save(cashFromBank);
 
-        requestedWalletEntry = findWalletEntry(bank, currency.getCode());
-        amountInBank = requestedWalletEntry.getAmount();
-        logger.debug("    Amount of " + currency.getCode() + " in bank after transaction: " + amountInBank);
-
-        Wallets userWalletEntry = findWalletEntry(username, currency.getCode());
-        int amountInUser = userWalletEntry.getAmount();
-        logger.debug("    Amount of " + currency.getCode() + " in user's wallet before transaction: " + amountInUser);
-
-        userWalletEntry.setAmount(amountInUser + currency.getAmount());
-        walletsRepository.save(userWalletEntry);
-
-        userWalletEntry = findWalletEntry(username, currency.getCode());
-        amountInUser = userWalletEntry.getAmount();
-        logger.debug("    Amount of " + currency.getCode() + " in user's wallet after transaction: " + amountInUser);
+        Wallets cashFromUser = findWalletEntry(username, currency.getCode());
+        cashFromUser.setAmount(cashFromUser.getAmount() + currency.getAmount());
+        walletsRepository.save(cashFromUser);
     }
 
     @Override
     public void sellCurrency(String username, Currency currency) {
-        logger.debug(username + " is selling " + currency.getAmount() + " " + currency.getCode());
+        Wallets cashFromUser = findWalletEntry(username, currency.getCode());
+
+        if (cashFromUser.getAmount() <= 0 || cashFromUser.getAmount() < currency.getAmount()) {
+            logger.error("    Can't sell!");
+            return;
+        }
+
+        cashFromUser.setAmount(cashFromUser.getAmount() - currency.getAmount());
+        walletsRepository.save(cashFromUser);
+
+        Wallets cashFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), currency.getCode());
+        cashFromBank.setAmount(cashFromBank.getAmount() + currency.getAmount());
+        walletsRepository.save(cashFromBank);
     }
 
 }
