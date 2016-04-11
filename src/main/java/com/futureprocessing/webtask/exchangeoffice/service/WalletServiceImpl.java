@@ -1,6 +1,5 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -49,35 +48,6 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Double countSumValue(List<Wallets> wallet) {
-        Double valueSum;
-        try {
-            valueSum = wallet
-                    .stream()
-                    .mapToDouble(w -> w.getValue())
-                    .sum();
-        } catch (Exception e) {
-            valueSum = null;
-        }
-        return valueSum;
-    }
-
-    @Override
-    public List<Wallets> initWallet(String username, List<Currency> currencies) {
-        List<Wallets> wallet = new ArrayList<>();
-
-        for (Currency currency : currencies) {
-            Wallets entry = new Wallets();
-            entry.setUsername(username);
-            entry.setCurrency(currency.getCode());
-            entry.setAmount(0);
-            wallet.add(entry);
-        }
-
-        return wallet;
-    }
-
-    @Override
     public void saveWallet(String username, Wallets wallet) {
         wallet.setUsername(username);
         walletsRepository.save(wallet);
@@ -113,12 +83,12 @@ public class WalletServiceImpl implements WalletService {
         requestedWalletEntry = walletsRepository.findOne(new WalletsId("bank", currency.getCode()));
         amountInBank = requestedWalletEntry.getAmount();
         logger.debug("    Amount of " + currency.getCode() + " in bank after transaction: " + amountInBank);
-        
+
         Wallets userWalletEntry = walletsRepository.findOne(new WalletsId(username, currency.getCode()));
         int amountInUser = userWalletEntry.getAmount();
-        
+
         logger.debug("    Amount of " + currency.getCode() + " in user's wallet before transaction: " + amountInUser);
-        
+
         userWalletEntry.setAmount(amountInUser + currency.getAmount());
         walletsRepository.save(userWalletEntry);
 
