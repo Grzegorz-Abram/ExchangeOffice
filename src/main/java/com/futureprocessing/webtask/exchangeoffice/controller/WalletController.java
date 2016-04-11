@@ -99,6 +99,7 @@ public class WalletController {
             return "index";
         }
 
+        currency.setAmount(currency.getAmount() * currency.getUnit());
         walletService.buyCurrency(userController.getUsername(), currency);
 
         return "redirect:/";

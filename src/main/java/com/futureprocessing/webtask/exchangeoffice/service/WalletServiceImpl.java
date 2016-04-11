@@ -7,6 +7,8 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Currency;
@@ -16,9 +18,13 @@ import com.futureprocessing.webtask.exchangeoffice.repository.WalletsRepository;
 
 @Service("walletService")
 @Transactional
+@PropertySource(value = "classpath:application.default.properties")
 public class WalletServiceImpl implements WalletService {
 
     private final Logger logger = LoggerFactory.getLogger(WalletServiceImpl.class);
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     WalletsRepository walletsRepository;
@@ -76,10 +82,11 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void buyCurrency(String username, Currency currency) {
-        currency.setAmount(currency.getAmount() * currency.getUnit());
+        String bank = environment.getRequiredProperty("default.bank.username");
+
         logger.debug(username + " is buying " + currency.getAmount() + " " + currency.getCode());
 
-        Wallets requestedWalletEntry = findWalletEntry("bank", currency.getCode());
+        Wallets requestedWalletEntry = findWalletEntry(bank, currency.getCode());
         int amountInBank = requestedWalletEntry.getAmount();
         logger.debug("    Amount of " + currency.getCode() + " in bank before transaction: " + amountInBank);
 
@@ -91,7 +98,7 @@ public class WalletServiceImpl implements WalletService {
         requestedWalletEntry.setAmount(amountInBank - currency.getAmount());
         walletsRepository.save(requestedWalletEntry);
 
-        requestedWalletEntry = findWalletEntry("bank", currency.getCode());
+        requestedWalletEntry = findWalletEntry(bank, currency.getCode());
         amountInBank = requestedWalletEntry.getAmount();
         logger.debug("    Amount of " + currency.getCode() + " in bank after transaction: " + amountInBank);
 

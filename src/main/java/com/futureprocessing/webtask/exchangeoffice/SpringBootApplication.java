@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Authorities;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
@@ -22,7 +25,11 @@ import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 @EnableAutoConfiguration(exclude = { ErrorMvcAutoConfiguration.class })
 @ComponentScan("com.futureprocessing.webtask.exchangeoffice")
 @EnableCaching
+@PropertySource(value = "classpath:application.default.properties")
 public class SpringBootApplication {
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     WalletService walletService;
@@ -33,6 +40,9 @@ public class SpringBootApplication {
     @Autowired
     ExchangeRateService exchangeRateService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public static void main(String[] args) {
         SpringApplication.run(SpringBootApplication.class, args);
     }
@@ -40,18 +50,23 @@ public class SpringBootApplication {
     @Bean
     public CommandLineRunner demo(UsersRepository usersRepository, AuthoritiesRepository authoritiesRepository, WalletsRepository walletsRepository) {
         return (args) -> {
-            usersRepository.save(new Users("user", "$2a$10$IzWi1i14KuUu239KDpGStuuTi67bNIfzgrttFoK7o0aynENIOGIqa", true));
-            usersRepository.save(new Users("bank", "", false));
+            String username = environment.getRequiredProperty("default.user.username");
+            String password = environment.getRequiredProperty("default.user.password");
+            String role = environment.getRequiredProperty("default.user.role");
+            String bank = environment.getRequiredProperty("default.bank.username");
 
-            authoritiesRepository.save(new Authorities("user", "USER"));
-            authoritiesRepository.save(new Authorities("bank", ""));
+            usersRepository.save(new Users(username, passwordEncoder.encode(password), true));
+            usersRepository.save(new Users(bank, null, false));
 
-            walletsRepository.save(new Wallets("bank", "USD", 1000));
-            walletsRepository.save(new Wallets("bank", "EUR", 1000));
-            walletsRepository.save(new Wallets("bank", "CHF", 1000));
-            walletsRepository.save(new Wallets("bank", "RUB", 1000));
-            walletsRepository.save(new Wallets("bank", "CZK", 1000));
-            walletsRepository.save(new Wallets("bank", "GBP", 1000));
+            authoritiesRepository.save(new Authorities(username, role));
+            authoritiesRepository.save(new Authorities(bank, null));
+
+            walletsRepository.save(new Wallets(bank, "USD", environment.getRequiredProperty("default.bank.amount.USD", Integer.class)));
+            walletsRepository.save(new Wallets(bank, "EUR", environment.getRequiredProperty("default.bank.amount.EUR", Integer.class)));
+            walletsRepository.save(new Wallets(bank, "CHF", environment.getRequiredProperty("default.bank.amount.CHF", Integer.class)));
+            walletsRepository.save(new Wallets(bank, "RUB", environment.getRequiredProperty("default.bank.amount.RUB", Integer.class)));
+            walletsRepository.save(new Wallets(bank, "CZK", environment.getRequiredProperty("default.bank.amount.CZK", Integer.class)));
+            walletsRepository.save(new Wallets(bank, "GBP", environment.getRequiredProperty("default.bank.amount.GBP", Integer.class)));
         };
     }
 
