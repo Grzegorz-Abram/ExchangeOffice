@@ -51,7 +51,7 @@ public class WalletServiceImpl implements WalletService {
                 currency = new Currency();
             }
             entry.setUnit(currency.getUnit() != null ? currency.getUnit() : 1);
-            entry.setUnitPrice(currency.getSellPrice() != null ? currency.getSellPrice() : 0.0);
+            entry.setUnitPrice(currency.getPurchasePrice() != null ? currency.getPurchasePrice() : 0.0);
             entry.setValue(entry.getUnitPrice() * entry.getAmount() / entry.getUnit());
         }
 
@@ -105,22 +105,22 @@ public class WalletServiceImpl implements WalletService {
         // Obca waluta z banku jest na ladzie
 
         Wallets plnFromUser = findWalletEntry(username, "PLN");
-        currency.setPurchasePrice(exchangeRateService.getExchangeRate().getItems().stream()
+        currency.setSellPrice(exchangeRateService.getExchangeRate().getItems().stream()
                 .filter(c -> c.getCode().equals(currency.getCode()))
                 .findFirst().get()
-                .getPurchasePrice());
+                .getSellPrice());
 
-        logger.debug("    Actual purchase price: " + currency.getUnit() + " " + currency.getCode() + " = " + currency.getPurchasePrice() + " PLN");
+        logger.debug("    Actual purchase price: " + currency.getUnit() + " " + currency.getCode() + " = " + currency.getSellPrice() + " PLN");
         logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency() + " -> "
-                + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()) + " " + plnFromUser.getCurrency());
+                + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()) + " " + plnFromUser.getCurrency());
 
-        if (plnFromUser.getAmount() <= 0 || plnFromUser.getAmount() < (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit())) {
-            logger.debug("    USER can't buy currencies for " + (currency.getAmount() * currency.getPurchasePrice()) + " PLN");
+        if (plnFromUser.getAmount() <= 0 || plnFromUser.getAmount() < (currency.getAmount() * currency.getSellPrice() / currency.getUnit())) {
+            logger.debug("    USER can't buy currencies for " + (currency.getAmount() * currency.getSellPrice()) + " PLN");
             logger.debug("=== END ===");
             return;
         }
 
-        plnFromUser.setAmount(plnFromUser.getAmount() - (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()));
+        plnFromUser.setAmount(plnFromUser.getAmount() - (currency.getAmount() * currency.getSellPrice() / currency.getUnit()));
         walletsRepository.save(plnFromUser);
 
         logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency());
@@ -130,9 +130,9 @@ public class WalletServiceImpl implements WalletService {
         Wallets plnFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), "PLN");
 
         logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency() + " <- "
-                + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()) + " " + plnFromBank.getCurrency());
+                + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()) + " " + plnFromBank.getCurrency());
 
-        plnFromBank.setAmount(plnFromBank.getAmount() + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()));
+        plnFromBank.setAmount(plnFromBank.getAmount() + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()));
         walletsRepository.save(plnFromBank);
 
         logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency());
@@ -173,22 +173,22 @@ public class WalletServiceImpl implements WalletService {
         // Obca waluta użytkownika jest na ladzie
 
         Wallets plnFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), "PLN");
-        currency.setSellPrice(exchangeRateService.getExchangeRate().getItems().stream()
+        currency.setPurchasePrice(exchangeRateService.getExchangeRate().getItems().stream()
                 .filter(c -> c.getCode().equals(currency.getCode()))
                 .findFirst().get()
-                .getSellPrice());
+                .getPurchasePrice());
 
-        logger.debug("    Actual sell price: " + currency.getUnit() + " " + currency.getCode() + " = " + currency.getSellPrice() + " PLN");
+        logger.debug("    Actual sell price: " + currency.getUnit() + " " + currency.getCode() + " = " + currency.getPurchasePrice() + " PLN");
         logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency() + " -> "
-                + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()) + " " + plnFromBank.getCurrency());
+                + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()) + " " + plnFromBank.getCurrency());
 
-        if (plnFromBank.getAmount() <= 0 || plnFromBank.getAmount() < (currency.getAmount() * currency.getSellPrice() / currency.getUnit())) {
-            logger.debug("    USER can't sell currencies for " + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()) + " PLN");
+        if (plnFromBank.getAmount() <= 0 || plnFromBank.getAmount() < (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit())) {
+            logger.debug("    USER can't sell currencies for " + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()) + " PLN");
             logger.debug("=== END ===");
             return;
         }
 
-        plnFromBank.setAmount(plnFromBank.getAmount() - (currency.getAmount() * currency.getSellPrice() / currency.getUnit()));
+        plnFromBank.setAmount(plnFromBank.getAmount() - (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()));
         walletsRepository.save(plnFromBank);
 
         logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency());
@@ -198,9 +198,9 @@ public class WalletServiceImpl implements WalletService {
         Wallets plnFromUser = findWalletEntry(username, "PLN");
 
         logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency() + " <- "
-                + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()) + " " + plnFromUser.getCurrency());
+                + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()) + " " + plnFromUser.getCurrency());
 
-        plnFromUser.setAmount(plnFromUser.getAmount() + (currency.getAmount() * currency.getSellPrice() / currency.getUnit()));
+        plnFromUser.setAmount(plnFromUser.getAmount() + (currency.getAmount() * currency.getPurchasePrice() / currency.getUnit()));
         walletsRepository.save(plnFromUser);
 
         logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency());

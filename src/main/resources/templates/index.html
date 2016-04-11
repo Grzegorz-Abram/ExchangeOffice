@@ -64,7 +64,7 @@
 						<tr th:each="entry : ${currencies}">
 							<td th:text="${entry.code}"></td>
 							<td th:text="${entry.unit}"></td>
-							<td th:text="${#numbers.formatDecimal(entry.purchasePrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+							<td th:text="${#numbers.formatDecimal(entry.sellPrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
 							<td><a th:href="@{/wallet/buy/{currency}(currency=${entry.code})}"> <span th:text="#{label.wallet.currencies.buy}"></span>
 							</a></td>
 						</tr>
