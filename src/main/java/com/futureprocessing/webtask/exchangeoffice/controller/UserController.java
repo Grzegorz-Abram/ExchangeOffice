@@ -3,8 +3,6 @@ package com.futureprocessing.webtask.exchangeoffice.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.Authentication;
@@ -83,8 +81,6 @@ public class UserController {
     }
 
     boolean isLoggedIn() {
-        logger.debug("checking if logged in");
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null) {
