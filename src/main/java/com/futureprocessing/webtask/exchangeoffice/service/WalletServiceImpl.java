@@ -94,4 +94,9 @@ public class WalletServiceImpl implements WalletService {
         System.out.println(name + " is buying " + (currency.getAmount() * currency.getUnit()) + " " + currency.getCode());
     }
 
+    @Override
+    public void sellCurrency(String name, Currency currency) {
+        System.out.println(name + " is selling " + currency.getAmount() + " " + currency.getCode());
+    }
+
 }

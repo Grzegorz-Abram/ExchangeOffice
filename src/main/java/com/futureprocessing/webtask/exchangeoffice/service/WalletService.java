@@ -23,4 +23,6 @@ public interface WalletService {
 
     void buyCurrency(String name, Currency currency);
 
+    void sellCurrency(String name, Currency currency);
+
 }

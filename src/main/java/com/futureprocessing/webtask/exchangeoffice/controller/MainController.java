@@ -156,9 +156,21 @@ public class MainController {
 
             return "edit";
         } else if (operation.equals("sell")) {
+            Currencies currencies = exchangeRateService.getExchangeRate();
+            List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies.getItems());
+            Double sumValue = walletService.countSumValue(wallet);
+
+            model.addAttribute("currencies", currencies.getItems());
+            model.addAttribute("publicationDate", currencies.getPublicationDate());
+            model.addAttribute("wallet", wallet);
+            model.addAttribute("sumValue", sumValue);
             model.addAttribute("sellCurrency", currency);
 
-            return "redirect:/wallet";
+            Currency newCurrency = new Currency();
+            newCurrency.setCode(currency);
+            model.addAttribute("currency", newCurrency);
+
+            return "index";
         } else if (operation.equals("buy")) {
             Currencies currencies = exchangeRateService.getExchangeRate();
             List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies.getItems());
@@ -213,6 +225,35 @@ public class MainController {
         }
 
         walletService.buyCurrency(auth.getName(), currency);
+
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = { "/wallet/sell/*" }, method = RequestMethod.POST)
+    public String sellWalletEntry(@Valid Currency currency, BindingResult bindingResult, Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (bindingResult.hasErrors()) {
+            Currencies currencies = exchangeRateService.getExchangeRate();
+            List<Wallets> wallet = walletService.loadWallet(auth.getName(), currencies.getItems());
+            Double sumValue = walletService.countSumValue(wallet);
+
+            model.addAttribute("currencies", currencies.getItems());
+            model.addAttribute("publicationDate", currencies.getPublicationDate());
+            model.addAttribute("wallet", wallet);
+            model.addAttribute("sumValue", sumValue);
+            model.addAttribute("sellCurrency", currency.getCode());
+
+            Currency newCurrency = new Currency();
+            newCurrency.setCode(currency.getCode());
+            model.addAttribute("currency", newCurrency);
+
+            model.addAttribute("error", bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage());
+
+            return "index";
+        }
+
+        walletService.sellCurrency(auth.getName(), currency);
 
         return "redirect:/";
     }

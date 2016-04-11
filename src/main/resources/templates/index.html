@@ -16,10 +16,15 @@
 		var buyAmount = sessionStorage.getItem('buyAmount');
 		if (buyAmount != 'undefined')
 			$('#buyAmount').val(buyAmount);
+
+		var sellAmount = sessionStorage.getItem('sellAmount');
+		if (sellAmount != 'undefined')
+			$('#sellAmount').val(sellAmount);
 	}
 
 	window.onbeforeunload = function() {
 		sessionStorage.setItem("buyAmount", $('#buyAmount').val());
+		sessionStorage.setItem("sellAmount", $('#sellAmount').val());
 	}
 </script>
 </head>
@@ -76,7 +81,8 @@
 				<form th:action="@{/wallet/buy} + '/' + ${buyCurrency}" method="post" th:object="${currency}">
 					<div>
 						<label for="buyAmount" th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${buyCurrency}">amount</label> <input type="text" id="buyAmount"
-							name="buyAmount" th:field="*{amount}" /> <label for="buyAmount" th:if="${not #strings.equals('1', currency.unit)}" th:text="'x ' + *{unit}">x unit</label>
+							name="buyAmount" th:field="*{amount}" /> <label for="buyAmount" th:if="${not #strings.equals('1', currency.unit)}" th:text="'x ' + *{unit}">x
+							unit</label>
 					</div>
 					<input type="hidden" th:field="*{code}" /> <input type="hidden" th:field="*{unit}" />
 					<button type="submit" th:text="#{label.wallet.currencies.buy}">buy</button>
@@ -94,33 +100,48 @@
 				<a href="edit.html" th:href="@{/wallet/edit}" th:text="#{label.wallet.edit}">sample_edit</a>
 			</div>
 
-			<table th:if="${not #lists.isEmpty(wallet)}">
-				<thead>
-					<tr>
-						<th th:text="#{label.wallet.myWallet.currencyHeader}">currencyHeader</th>
-						<th th:text="#{label.wallet.myWallet.unitPriceHeader}">unitPriceHeader</th>
-						<th th:text="#{label.wallet.myWallet.amountHeader}">amountHeader</th>
-						<th th:text="#{label.wallet.myWallet.valueHeader}">valueHeader</th>
-						<th th:text="#{label.wallet.myWallet.actionsHeader}">actionsHeader</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="entry : ${wallet}">
-						<td th:text="${entry.currency}">currency</td>
-						<td th:text="${#numbers.formatDecimal(entry.unitPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
-						<td th:text="${entry.amount}">amount</td>
-						<td th:text="${#numbers.formatDecimal(entry.value, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
-						<td><a th:href="@{/wallet/sell/{currency}(currency=${entry.currency})}"> <span th:text="#{label.wallet.myWallet.sell}"></span>
-						</a></td>
-					</tr>
-				</tbody>
-				<tfoot>
-					<tr>
-						<td colspan="5"><span th:text="#{label.wallet.myWallet.summaryPLN}">summaryPLN</span>: <span
-							th:text="${#numbers.formatDecimal(sumValue, 1, 'DEFAULT', 2, 'DEFAULT')}">sumValue</span></td>
-					</tr>
-				</tfoot>
-			</table>
+			<div th:if="${not #lists.isEmpty(wallet)}">
+				<table>
+					<thead>
+						<tr>
+							<th th:text="#{label.wallet.myWallet.currencyHeader}">currencyHeader</th>
+							<th th:text="#{label.wallet.myWallet.unitPriceHeader}">unitPriceHeader</th>
+							<th th:text="#{label.wallet.myWallet.amountHeader}">amountHeader</th>
+							<th th:text="#{label.wallet.myWallet.valueHeader}">valueHeader</th>
+							<th th:text="#{label.wallet.myWallet.actionsHeader}">actionsHeader</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="entry : ${wallet}">
+							<td th:text="${entry.currency}">currency</td>
+							<td th:text="${#numbers.formatDecimal(entry.unitPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
+							<td th:text="${entry.amount}">amount</td>
+							<td th:text="${#numbers.formatDecimal(entry.value, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
+							<td><a th:href="@{/wallet/sell/{currency}(currency=${entry.currency})}"> <span th:text="#{label.wallet.myWallet.sell}"></span>
+							</a></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5"><span th:text="#{label.wallet.myWallet.summaryPLN}">summaryPLN</span>: <span
+								th:text="${#numbers.formatDecimal(sumValue, 1, 'DEFAULT', 2, 'DEFAULT')}">sumValue</span></td>
+						</tr>
+					</tfoot>
+				</table>
+
+				<div th:if="${not #strings.isEmpty(sellCurrency)}">
+					<form th:action="@{/wallet/sell} + '/' + ${sellCurrency}" method="post" th:object="${currency}">
+						<div>
+							<label for="sellAmount" th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${sellCurrency}">amount</label> <input type="text" id="sellAmount"
+								name="sellAmount" th:field="*{amount}" />
+						</div>
+						<input type="hidden" th:field="*{code}" />
+						<button type="submit" th:text="#{label.wallet.currencies.sell}">sell</button>
+						<a href="login.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
+					</form>
+					<span th:text="${error}" id="sellError">Amount Error</span>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
