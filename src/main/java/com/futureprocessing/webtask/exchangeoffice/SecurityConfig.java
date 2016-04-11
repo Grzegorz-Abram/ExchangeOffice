@@ -32,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/console/**").permitAll()
                 .antMatchers("/resources/**").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/").permitAll()
@@ -47,6 +48,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessUrl("/login?logout")
                 .permitAll();
+
+        // ENABLE ONLY, WHEN YOU WANT TO ACCESS H2 DATABASE CONSOLE (http://localhost:8080/console)
+        // http.csrf().disable();
+        // http.headers().frameOptions().disable();
     }
 
     @Bean
