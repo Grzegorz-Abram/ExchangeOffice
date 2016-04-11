@@ -1,7 +1,6 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
 import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -43,7 +42,8 @@ public class WalletServiceImpl implements WalletService {
             if (currencies != null) {
                 currency = currencies.stream()
                         .filter(c -> c.getCode().equals(entry.getCurrency()))
-                        .findFirst().get();
+                        .findFirst()
+                        .orElse(new Currency());
             } else {
                 currency = new Currency();
             }

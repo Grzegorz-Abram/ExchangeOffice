@@ -1,6 +1,7 @@
 package com.futureprocessing.webtask.exchangeoffice.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -124,10 +125,13 @@ public class WalletController {
 
         model.addAttribute("currencies", exchangeRateController.getCurrencies());
         model.addAttribute("publicationDate", exchangeRateController.getCurrenciesPublicationDate());
-        model.addAttribute("wallet", wallet);
-        model.addAttribute("sumValue", wallet.stream()
-                .mapToDouble(w -> w.getValue())
-                .sum());
+        model.addAttribute("wallet", wallet.stream()
+                .filter(w -> !w.getCurrency().equals("PLN"))
+                .collect(Collectors.toList()));
+        model.addAttribute("amountPLN", wallet.stream()
+                .filter(w -> w.getCurrency().equals("PLN"))
+                .findFirst().get()
+                .getAmount());
     }
 
     private void prepareEditPage(Model model) {
@@ -136,7 +140,9 @@ public class WalletController {
 
     private void prepareEditPage(Model model, String currency) {
         model.addAttribute("newWallet", walletService.findWalletEntry(userController.getUsername(), currency));
-        model.addAttribute("wallet", walletService.loadWallet(userController.getUsername()));
+        model.addAttribute("wallet", walletService.loadWallet(userController.getUsername()).stream()
+                .filter(w -> !w.getCurrency().equals("PLN"))
+                .collect(Collectors.toList()));
         model.addAttribute("allCurrencies", exchangeRateController.getCurrencies());
     }
 
