@@ -9,7 +9,7 @@ public interface WalletService {
 
     List<Wallets> loadWallet(String username);
 
-    List<Wallets> loadWallet(String username, List<Currency> currencies);
+    List<Wallets> loadWalletWithPrices(String username, List<Currency> currencies);
 
     void saveWallet(String username, Wallets wallet);
 

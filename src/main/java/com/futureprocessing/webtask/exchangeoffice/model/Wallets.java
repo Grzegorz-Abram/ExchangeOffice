@@ -16,7 +16,7 @@ public class Wallets {
     @Id
     private String currency;
     @NotNull
-    @Min(1)
+    @Min(0)
     private Integer amount;
 
     @Transient

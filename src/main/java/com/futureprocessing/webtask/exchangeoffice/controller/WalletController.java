@@ -1,5 +1,7 @@
 package com.futureprocessing.webtask.exchangeoffice.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,25 @@ import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 
 @Controller
 @ComponentScan
-public class WalletController extends ControllerSupport {
+public class WalletController {
 
     @Autowired
     private WalletService walletService;
+
+    @Autowired
+    ExchangeRateController exchangeRateController;
+
+    @Autowired
+    UserController userController;
+
+    @RequestMapping(value = { "/", "/wallet" }, method = RequestMethod.GET)
+    public String home(Model model) {
+        if (userController.isLoggedIn()) {
+            prepareIndexPage(model);
+        }
+
+        return "index";
+    }
 
     @RequestMapping(value = "/wallet/edit", method = RequestMethod.GET)
     public String edit(Model model) {
@@ -37,7 +54,7 @@ public class WalletController extends ControllerSupport {
             return "edit";
         }
 
-        walletService.saveWallet(getUsername(), newWallet);
+        walletService.saveWallet(userController.getUsername(), newWallet);
 
         return "redirect:/wallet/edit";
     }
@@ -47,32 +64,25 @@ public class WalletController extends ControllerSupport {
             final RedirectAttributes redirectAttributes, Model model) {
 
         if (operation.equals("delete")) {
-            walletService.deleteFromWallet(getUsername(), currency);
+            walletService.deleteFromWallet(userController.getUsername(), currency);
         } else if (operation.equals("edit")) {
             prepareEditPage(model, currency);
             return "edit";
-        } else if (operation.equals("sell")) {
+        } else if (operation.equals("sell") || operation.equals("buy")) {
             prepareIndexPage(model);
-            model.addAttribute("sellCurrency", currency);
 
             Currency newCurrency = new Currency();
             newCurrency.setCode(currency);
-            model.addAttribute("currency", newCurrency);
 
-            return "index";
-        } else if (operation.equals("buy")) {
-            prepareIndexPage(model);
-            model.addAttribute("buyCurrency", currency);
-
-            Currency newCurrency = new Currency();
-            newCurrency.setCode(currency);
-            newCurrency.setUnit(getCurrencies()
-                    .stream()
-                    .filter(c -> c.getCode().equals(currency))
-                    .findFirst()
-                    .get()
-                    .getUnit());
-            model.addAttribute("currency", newCurrency);
+            if (operation.equals("sell")) {
+                model.addAttribute("currencyToSell", newCurrency);
+            } else if (operation.equals("buy")) {
+                newCurrency.setUnit(exchangeRateController.getCurrencies().stream()
+                        .filter(c -> c.getCode().equals(currency))
+                        .findFirst().get()
+                        .getUnit());
+                model.addAttribute("currencyToBuy", newCurrency);
+            }
 
             return "index";
         }
@@ -85,17 +95,11 @@ public class WalletController extends ControllerSupport {
         if (bindingResult.hasErrors()) {
             prepareIndexPage(model);
             addErrorAttribute(model, bindingResult);
-
-            Currency newCurrency = new Currency();
-            newCurrency.setCode(currency.getCode());
-            newCurrency.setUnit(currency.getUnit());
-            model.addAttribute("currency", newCurrency);
-            model.addAttribute("buyCurrency", currency.getCode());
-
+            model.addAttribute("currencyToBuy", currency);
             return "index";
         }
 
-        walletService.buyCurrency(getUsername(), currency);
+        walletService.buyCurrency(userController.getUsername(), currency);
 
         return "redirect:/";
     }
@@ -105,18 +109,38 @@ public class WalletController extends ControllerSupport {
         if (bindingResult.hasErrors()) {
             prepareIndexPage(model);
             addErrorAttribute(model, bindingResult);
-
-            Currency newCurrency = new Currency();
-            newCurrency.setCode(currency.getCode());
-            model.addAttribute("currency", newCurrency);
-            model.addAttribute("sellCurrency", currency.getCode());
-
+            model.addAttribute("currencyToSell", currency);
             return "index";
         }
 
-        walletService.sellCurrency(getUsername(), currency);
+        walletService.sellCurrency(userController.getUsername(), currency);
 
         return "redirect:/";
+    }
+
+    private void prepareIndexPage(Model model) {
+        List<Wallets> wallet = walletService.loadWalletWithPrices(userController.getUsername(), exchangeRateController.getCurrencies());
+
+        model.addAttribute("currencies", exchangeRateController.getCurrencies());
+        model.addAttribute("publicationDate", exchangeRateController.getCurrenciesPublicationDate());
+        model.addAttribute("wallet", wallet);
+        model.addAttribute("sumValue", wallet.stream()
+                .mapToDouble(w -> w.getValue())
+                .sum());
+    }
+
+    private void prepareEditPage(Model model) {
+        prepareEditPage(model, "");
+    }
+
+    private void prepareEditPage(Model model, String currency) {
+        model.addAttribute("newWallet", walletService.findWalletEntry(userController.getUsername(), currency));
+        model.addAttribute("wallet", walletService.loadWallet(userController.getUsername()));
+        model.addAttribute("allCurrencies", exchangeRateController.getCurrencies());
+    }
+
+    void addErrorAttribute(Model model, BindingResult bindingResult) {
+        model.addAttribute("error", bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage());
     }
 
 }

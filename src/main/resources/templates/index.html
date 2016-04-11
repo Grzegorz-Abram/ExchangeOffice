@@ -77,14 +77,14 @@
 				</table>
 			</div>
 
-			<div th:if="${not #strings.isEmpty(buyCurrency)}">
-				<form th:action="@{/wallet/buy} + '/' + ${buyCurrency}" method="post" th:object="${currency}">
+			<div th:if="${not #strings.isEmpty(currencyToBuy)}">
+				<form th:action="@{/wallet/buy} + '/' + ${currencyToBuy.code}" method="post">
 					<div>
-						<label for="buyAmount" th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${buyCurrency}">amount</label> <input type="text" id="buyAmount"
-							name="buyAmount" th:field="*{amount}" /> <label for="buyAmount" th:if="${not #strings.equals('1', currency.unit)}" th:text="'x ' + *{unit}">x
+						<label th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${currencyToBuy.code}">amount</label> <input type="text" id="buyAmount"
+							th:field="${currencyToBuy.amount}" /> <label th:if="${not #strings.equals('1', currencyToBuy.unit)}" th:text="'x ' + ${currencyToBuy.unit}">x
 							unit</label>
 					</div>
-					<input type="hidden" th:field="*{code}" /> <input type="hidden" th:field="*{unit}" />
+					<input type="hidden" th:field="${currencyToBuy.code}" /> <input type="hidden" th:field="${currencyToBuy.unit}" />
 					<button type="submit" th:text="#{label.wallet.currencies.buy}">buy</button>
 					<a href="login.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
 				</form>
@@ -95,10 +95,6 @@
 
 		<div>
 			<h3 th:text="#{label.wallet.myWalletHeader}">sample_myWalletHeader</h3>
-
-			<div th:if="${#lists.isEmpty(wallet)}">
-				<a href="edit.html" th:href="@{/wallet/edit}" th:text="#{label.wallet.edit}">sample_edit</a>
-			</div>
 
 			<div th:if="${not #lists.isEmpty(wallet)}">
 				<table>
@@ -129,19 +125,21 @@
 					</tfoot>
 				</table>
 
-				<div th:if="${not #strings.isEmpty(sellCurrency)}">
-					<form th:action="@{/wallet/sell} + '/' + ${sellCurrency}" method="post" th:object="${currency}">
+				<div th:if="${not #strings.isEmpty(currencyToSell)}">
+					<form th:action="@{/wallet/sell} + '/' + ${currencyToSell.code}" method="post">
 						<div>
-							<label for="sellAmount" th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${sellCurrency}">amount</label> <input type="text" id="sellAmount"
-								name="sellAmount" th:field="*{amount}" />
+							<label th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${currencyToSell.code}">amount</label> <input type="text" id="sellAmount"
+								th:field="${currencyToSell.amount}" />
 						</div>
-						<input type="hidden" th:field="*{code}" />
+						<input type="hidden" th:field="${currencyToSell.code}" />
 						<button type="submit" th:text="#{label.wallet.currencies.sell}">sell</button>
-						<a href="login.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
+						<a href="index.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
 					</form>
 					<span th:text="${error}" id="sellError">Amount Error</span>
 				</div>
 			</div>
+
+			<a href="edit.html" th:href="@{/wallet/edit}" th:text="#{label.wallet.edit}">sample_edit</a>
 		</div>
 	</div>
 </body>

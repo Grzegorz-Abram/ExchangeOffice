@@ -2,9 +2,13 @@ package com.futureprocessing.webtask.exchangeoffice.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -18,19 +22,10 @@ import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 
 @Controller
 @ComponentScan
-public class MainController extends ControllerSupport {
+public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @RequestMapping(value = { "/", "/wallet" }, method = RequestMethod.GET)
-    public String home(Model model) {
-        if (isLoggedIn()) {
-            prepareIndexPage(model);
-        }
-
-        return "index";
-    }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error,
@@ -80,6 +75,28 @@ public class MainController extends ControllerSupport {
             userService.registerNewUserAccount(user);
 
             return "redirect:/";
+        }
+    }
+
+    String getUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    boolean isLoggedIn() {
+        logger.debug("checking if logged in");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null) {
+            return false;
+        } else {
+            for (GrantedAuthority a : auth.getAuthorities()) {
+                if (a.getAuthority().equals("ROLE_ANONYMOUS")) {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 
