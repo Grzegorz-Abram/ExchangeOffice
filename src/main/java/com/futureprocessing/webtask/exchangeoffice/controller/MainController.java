@@ -172,6 +172,13 @@ public class MainController {
 
             Currency newCurrency = new Currency();
             newCurrency.setCode(currency);
+            newCurrency.setUnit(currencies
+                    .getItems()
+                    .stream()
+                    .filter(c -> c.getCode().equals(currency))
+                    .findFirst()
+                    .get()
+                    .getUnit());
             model.addAttribute("currency", newCurrency);
 
             return "index";
@@ -197,6 +204,7 @@ public class MainController {
 
             Currency newCurrency = new Currency();
             newCurrency.setCode(currency.getCode());
+            newCurrency.setUnit(currency.getUnit());
             model.addAttribute("currency", newCurrency);
 
             model.addAttribute("error", bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage());
