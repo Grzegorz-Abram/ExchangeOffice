@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import com.futureprocessing.webtask.exchangeoffice.repository.WalletsRepository;
 @Service("walletService")
 @Transactional
 public class WalletServiceImpl implements WalletService {
+
+    private final Logger logger = LoggerFactory.getLogger(WalletServiceImpl.class);
 
     @Autowired
     WalletsRepository walletsRepository;
@@ -90,13 +94,42 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void buyCurrency(String name, Currency currency) {
-        System.out.println(name + " is buying " + (currency.getAmount() * currency.getUnit()) + " " + currency.getCode());
+    public void buyCurrency(String username, Currency currency) {
+        logger.debug(username + " is buying " + (currency.getAmount() * currency.getUnit()) + " " + currency.getCode());
+
+        Wallets requestedWalletEntry = walletsRepository.findOne(new WalletsId("bank", currency.getCode()));
+        int amountInBank = requestedWalletEntry.getAmount();
+
+        logger.debug("    Amount of " + currency.getCode() + " in bank before transaction: " + amountInBank);
+
+        if (amountInBank <= 0 || amountInBank < currency.getAmount()) {
+            logger.error("    Can't buy!");
+            return;
+        }
+
+        requestedWalletEntry.setAmount(amountInBank - currency.getAmount());
+        walletsRepository.save(requestedWalletEntry);
+
+        requestedWalletEntry = walletsRepository.findOne(new WalletsId("bank", currency.getCode()));
+        amountInBank = requestedWalletEntry.getAmount();
+        logger.debug("    Amount of " + currency.getCode() + " in bank after transaction: " + amountInBank);
+        
+        Wallets userWalletEntry = walletsRepository.findOne(new WalletsId(username, currency.getCode()));
+        int amountInUser = userWalletEntry.getAmount();
+        
+        logger.debug("    Amount of " + currency.getCode() + " in user's wallet before transaction: " + amountInUser);
+        
+        userWalletEntry.setAmount(amountInUser + currency.getAmount());
+        walletsRepository.save(userWalletEntry);
+
+        userWalletEntry = walletsRepository.findOne(new WalletsId(username, currency.getCode()));
+        amountInUser = userWalletEntry.getAmount();
+        logger.debug("    Amount of " + currency.getCode() + " in user's wallet after transaction: " + amountInUser);
     }
 
     @Override
-    public void sellCurrency(String name, Currency currency) {
-        System.out.println(name + " is selling " + currency.getAmount() + " " + currency.getCode());
+    public void sellCurrency(String username, Currency currency) {
+        logger.debug(username + " is selling " + currency.getAmount() + " " + currency.getCode());
     }
 
 }
