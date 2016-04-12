@@ -3,66 +3,141 @@
 <head>
 <title th:text="#{label.edit.title}">sample_title</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="../static/css/bootstrap.min.css" th:href="@{../css/bootstrap.min.css}" rel="stylesheet" media="screen" />
+<link href="../static/css/main.css" th:href="@{../css/main.css}" rel="stylesheet" media="screen" />
+<script src="../static/js/jquery.min.js" th:src="@{../js/jquery.min.js}"></script>
+<script src="../static/js/bootstrap.min.js" th:src="@{../js/bootstrap.min.js}"></script>
+<link href="../static/css/bootstrap.min.css" th:href="@{../../css/bootstrap.min.css}" rel="stylesheet" media="screen" />
+<link href="../static/css/main.css" th:href="@{../../css/main.css}" rel="stylesheet" media="screen" />
+<script src="../static/js/jquery.min.js" th:src="@{../../js/jquery.min.js}"></script>
+<script src="../static/js/bootstrap.min.js" th:src="@{../../js/bootstrap.min.js}"></script>
+<script type="text/javascript">
+	//<![CDATA[
+	var clickedInput;
+	$(document).ready(function() {
+		$("input").click(function(event) {
+			clickedInput = this;
+		});
+
+		$("form").submit(function() {
+			var confirmClick = $(clickedInput).hasClass("confirm");
+			if (confirmClick) {
+				var amount = 1;
+				try {
+					amount = document.getElementById('amount').value;
+				} catch (err) {
+				}
+
+				var unit = 1;
+				try {
+					var e = document.getElementById("code");
+					unit = e.options[e.selectedIndex].text;
+				} catch (err) {
+				}
+
+				var msg = $(clickedInput).attr("title").replace('#value#', amount).replace('#code#', unit);
+				if (!msg)
+					msg = "Click OK to continue!";
+
+				if (isNaN(amount) || amount <= 0 || amount % 1 !== 0) {
+					var msgError = $(clickedInput).attr("error");
+					if (!msgError)
+						msgError = "Error: not a number...";
+					event.preventDefault();
+					return alert(msgError);
+				}
+
+				return confirm(msg);
+			}
+			return true;
+		});
+	});
+	// ]]>
+</script>
 </head>
 <body>
+	<div class="container">
 
-	<div>
-		<h3 th:text="#{label.edit.addEntry}">addEntry</h3>
+		<!-- Static navbar -->
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">Exchange</a>
+				</div>
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="wallet.html" th:href="@{/wallet}" th:text="#{label.edit.wallet}">sample_wallet</a></li>
+					</ul>
+				</div>
+				<!--/.nav-collapse -->
+			</div>
+			<!--/.container-fluid -->
+		</nav>
 
-		<form th:object="${newWallet}" th:action="@{/wallet/save}" action="#" method="post">
-			<table>
-				<thead>
-					<tr>
-						<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
-						<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="entry : ${newWallet}">
-						<td><select th:field="*{currency}">
-								<option th:if="${not #lists.isEmpty(allCurrencies)}" th:each="type : ${allCurrencies}" th:value="${type.code}"
-									th:text="#{${'option.edit.' + type.code}}">currency</option>
-								<option th:if="${#lists.isEmpty(allCurrencies)}" th:each="type : ${ {'USD', 'EUR', 'CHF', 'RUB', 'CZK', 'GBP'} }" th:value="${type}"
-									th:text="#{${'option.edit.' + type}}">currency</option>
-						</select></td>
-						<td><input type="text" th:field="*{amount}" /></td>
-					</tr>
-				</tbody>
-			</table>
+		<div class="jumbotron">
 
-			<div></div>
-			<button type="submit" th:text="#{label.edit.submit}">sample_submit</button>
-			<div></div>
-			<span th:if="${not #strings.isEmpty(error)}" th:text="${error}">Amount Error</span>
-		</form>
-	</div>
+			<div class="panel panel-default panel-edit">
+				<div class="panel-heading">
+					<h3 th:text="#{label.edit.addEntry}" class="panel-title">addEntry</h3>
+				</div>
 
-	<div>
-		<h3 th:text="#{label.edit.myWalletHeader}">sample_myWalletHeader</h3>
+				<form th:object="${newWallet}" th:action="@{/wallet/save}" action="#" method="post">
+					<table class="table table-bordered table-condensed">
+						<thead>
+							<tr>
+								<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
+								<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
+								<th th:text="#{label.edit.myWallet.operation}">operation</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="entry : ${newWallet}">
+								<td><select id="code" th:field="*{currency}">
+										<option th:if="${not #lists.isEmpty(allCurrencies)}" th:each="type : ${allCurrencies}" th:value="${type.code}"
+											th:text="#{${'option.edit.' + type.code}}">currency</option>
+										<option th:if="${#lists.isEmpty(allCurrencies)}" th:each="type : ${ {'USD', 'EUR', 'CHF', 'RUB', 'CZK', 'GBP'} }" th:value="${type}"
+											th:text="#{${'option.edit.' + type}}">currency</option>
+								</select></td>
+								<td><input id="amount" type="text" th:field="*{amount}" /></td>
+								<td>
+								<input type="submit" class="confirm btn btn-default"
+						th:attr="title=#{message.edit.myWallet.add.confirm} + ' #value# #code# ' + '?', error=#{message.edit.myWallet.add.error}, value=#{label.edit.submit}" />
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div></div>
+					<div th:if="${not #strings.isEmpty(error)}" th:text="${error}" class="alert alert-danger">Amount Error</div>
+				</form>
+			</div>
 
-		<table>
-			<thead>
-				<tr>
-					<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
-					<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
-					<th th:text="#{label.edit.myWallet.operation}">operation</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="entry : ${wallet}">
-					<td th:text="${entry.currency}"></td>
-					<td th:text="${entry.amount}"></td>
-					<td><a th:href="@{/wallet/edit/{currency}(currency=${entry.currency})}"><span th:text="#{label.edit.myWallet.edit}"></span></a> <a
-						th:href="@{/wallet/delete/{currency}(currency=${entry.currency})}"> <span th:text="#{label.edit.myWallet.delete}"></span></a></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+			<div class="panel panel-default panel-edit">
+				<div class="panel-heading">
+					<h3 th:text="#{label.edit.myWalletHeader}" class="panel-title">sample_myWalletHeader</h3>
+				</div>
 
-	<p />
-
-	<div>
-		<a href="wallet.html" th:href="@{/wallet}" th:text="#{label.edit.wallet}">sample_wallet</a>
+				<table class="table table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
+							<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
+							<th th:text="#{label.edit.myWallet.operation}">operation</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="entry : ${wallet}">
+							<td th:text="${entry.currency}"></td>
+							<td th:text="${entry.amount}"></td>
+							<td><a th:href="@{/wallet/edit/{currency}(currency=${entry.currency})}" class="btn btn-default"><span th:text="#{label.edit.myWallet.edit}"></span></a> <a
+								th:href="@{/wallet/delete/{currency}(currency=${entry.currency})}" class="btn btn-default"> <span th:text="#{label.edit.myWallet.delete}"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </body>
 </html>
