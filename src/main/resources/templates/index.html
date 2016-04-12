@@ -27,6 +27,94 @@
 		sessionStorage.setItem("sellAmount", $('#sellAmount').val());
 	}
 </script>
+<script type="text/javascript">
+	//<![CDATA[
+	var clickedInput;
+	$(document)
+			.ready(
+					function() {
+						$("input").click(function(event) {
+							clickedInput = this;
+						});
+
+						$("form")
+								.submit(
+										function() {
+											var confirmClickBuy = $(
+													clickedInput).hasClass(
+													"confirmBuy");
+											if (confirmClickBuy) {
+												var amount = -1;
+												amount = document
+														.getElementById('buyAmount').value;
+												if (!amount)
+													amount = 0;
+
+												var unit = 1;
+												try {
+													unit = document
+															.getElementById('buyUnit').textContent
+															.replace('x ', '');
+												} catch (err) {
+												}
+
+												var sum = amount * unit;
+
+												var msg = $(clickedInput).attr(
+														"title").replace(
+														'#value#', sum);
+												if (!msg)
+													msg = "Click OK to continue!";
+
+												if (isNaN(sum) || sum <= 0
+														|| sum % 1 !== 0) {
+													var msgError = $(
+															clickedInput).attr(
+															"error");
+													if (!msgError)
+														msgError = "Error: not a number...";
+													event.preventDefault();
+													return alert(msgError);
+												}
+
+												return confirm(msg);
+											}
+
+											var confirmClickSell = $(
+													clickedInput).hasClass(
+													"confirmSell");
+											if (confirmClickSell) {
+												var amount = -1;
+												amount = document
+														.getElementById('sellAmount').value;
+												if (!amount)
+													amount = 0;
+
+												var msg = $(clickedInput).attr(
+														"title").replace(
+														'#value#', amount);
+												if (!msg)
+													msg = "Click OK to continue!";
+
+												if (isNaN(amount)
+														|| amount <= 0
+														|| amount % 1 !== 0) {
+													var msgError = $(
+															clickedInput).attr(
+															"error");
+													if (!msgError)
+														msgError = "Error: not a number...";
+													event.preventDefault();
+													return alert(msgError);
+												}
+
+												return confirm(msg);
+											}
+											return true;
+										});
+					});
+	// ]]>
+</script>
 </head>
 <body>
 	<div th:if="${#httpServletRequest.remoteUser == null}">
@@ -81,12 +169,12 @@
 				<form th:action="@{/wallet/buy} + '/' + ${currencyToBuy.code}" method="post">
 					<div>
 						<label th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${currencyToBuy.code}">amount</label> <input type="text" id="buyAmount"
-							th:field="${currencyToBuy.amount}" /> <label th:if="${not #strings.equals('1', currencyToBuy.unit)}" th:text="'x ' + ${currencyToBuy.unit}">x
+							th:field="${currencyToBuy.amount}" /> <label id="buyUnit" th:if="${not #strings.equals('1', currencyToBuy.unit)}" th:text="'x ' + ${currencyToBuy.unit}">x
 							unit</label>
 					</div>
-					<input type="hidden" th:field="${currencyToBuy.code}" /> <input type="hidden" th:field="${currencyToBuy.unit}" />
-					<button type="submit" th:text="#{label.wallet.currencies.buy}">buy</button>
-					<a href="login.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
+					<input type="hidden" th:field="${currencyToBuy.code}" /> <input type="hidden" th:field="${currencyToBuy.unit}" /> <input type="submit" class="confirmBuy"
+						th:attr="title=#{message.wallet.currencies.buy.confirm} + ' #value# ' + ${currencyToBuy.code} + '?', error=#{message.wallet.currencies.buy.error}"
+						th:text="#{label.wallet.currencies.buy}" /> <a href="index.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
 				</form>
 				<span th:text="${error}" id="buyError">Amount Error</span>
 			</div>
@@ -125,9 +213,10 @@
 							<label th:text="#{label.wallet.myWallet.amountHeader} + ' of ' + ${currencyToSell.code}">amount</label> <input type="text" id="sellAmount"
 								th:field="${currencyToSell.amount}" />
 						</div>
-						<input type="hidden" th:field="${currencyToSell.code}" /> <input type="hidden" th:field="${currencyToSell.unit}" />
-						<button type="submit" th:text="#{label.wallet.currencies.sell}">sell</button>
-						<a href="index.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
+						<input type="hidden" th:field="${currencyToSell.code}" /> <input type="hidden" th:field="${currencyToSell.unit}" /> <input type="submit"
+							class="confirmSell"
+							th:attr="title=#{message.wallet.myWallet.sell.confirm} + ' #value# ' + ${currencyToSell.code} + '?', error=#{message.wallet.myWallet.sell.error}"
+							th:text="#{label.wallet.currencies.sell}">sell</input> <a href="index.html" th:href="@{/wallet}" th:text="#{label.wallet.currencies.cancel}">cancel</a>
 					</form>
 					<span th:text="${error}" id="sellError">Amount Error</span>
 				</div>
