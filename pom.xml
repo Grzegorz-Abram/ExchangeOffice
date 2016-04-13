@@ -7,7 +7,7 @@
 	<artifactId>ExchangeOffice</artifactId>
 	<version>0.1-SNAPSHOT</version>
 
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>${project.artifactId}</name>
 	<url>https://maven.apache.org/</url>
@@ -22,7 +22,6 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<spring.version>4.2.5.RELEASE</spring.version>
-		<spring.security.version>4.0.4.RELEASE</spring.security.version>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 		<skipUTs>false</skipUTs>
 		<skipITs>true</skipITs>
@@ -240,6 +239,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
@@ -253,16 +257,12 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
 		</dependency>
 
 		<!-- DB Connection Pooling -->
