@@ -1,10 +1,14 @@
-INSERT INTO users (username, password, enabled) VALUES ('user', '$2a$10$IzWi1i14KuUu239KDpGStuuTi67bNIfzgrttFoK7o0aynENIOGIqa', true);
+INSERT INTO users (username, enabled, password) VALUES ('user', TRUE, '$2a$10$ScsraJ0KbX.vbKXVlJtE6utnI7Xr8a/Bwe1HggrG.QYBHh24D68JO');
+INSERT INTO users (username, enabled, password) VALUES ('bank', FALSE, null);
+
 INSERT INTO authorities (username, authority) VALUES ('user', 'USER');
-INSERT INTO users (username, password, enabled) VALUES ('bank', '', false);
-INSERT INTO authorities (username, authority) VALUES ('bank', '');
-INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'USD', 1000);
-INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'EUR', 1000);
-INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'CHF', 1000);
-INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'RUB', 1000);
-INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'CZK', 1000);
-INSERT INTO wallets (username, currency, amount) VALUES ('bank', 'GBP', 1000);
+INSERT INTO authorities (username, authority) VALUES ('bank', null);
+
+INSERT INTO wallets (currency, username, amount) VALUES ('PLN', 'user', 1500);
+INSERT INTO wallets (currency, username, amount) VALUES ('PLN', 'bank', 1000000);
+INSERT INTO wallets (currency, username, amount) VALUES ('USD', 'bank', 1000000);
+INSERT INTO wallets (currency, username, amount) VALUES ('EUR', 'bank', 1000000);
+INSERT INTO wallets (currency, username, amount) VALUES ('CHF', 'bank', 1000000);
+INSERT INTO wallets (currency, username, amount) VALUES ('RUB', 'bank', 1000000);
+INSERT INTO wallets (currency, username, amount) VALUES ('CZK', 'bank', 1000000);
+INSERT INTO wallets (currency, username, amount) VALUES ('GBP', 'bank', 1000000);

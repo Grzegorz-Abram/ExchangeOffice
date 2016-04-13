@@ -2,14 +2,13 @@ package com.futureprocessing.webtask.exchangeoffice.service;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Currency;
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
@@ -17,7 +16,7 @@ import com.futureprocessing.webtask.exchangeoffice.model.WalletsId;
 import com.futureprocessing.webtask.exchangeoffice.repository.WalletsRepository;
 
 @Service("walletService")
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @PropertySource(value = "classpath:application.default.properties")
 public class WalletServiceImpl implements WalletService {
 
