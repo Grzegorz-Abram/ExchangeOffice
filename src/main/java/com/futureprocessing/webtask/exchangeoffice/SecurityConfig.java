@@ -35,6 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/console/**").permitAll()
                 .antMatchers("/resources/**").permitAll()
                 .antMatchers("/register").permitAll()
+                .antMatchers("/VAADIN/**").permitAll()
+                .antMatchers("/vaadinServlet/**").permitAll()
                 .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -50,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
 
         // ENABLE ONLY, WHEN YOU WANT TO ACCESS H2 DATABASE CONSOLE (http://localhost:8080/console)
-        // http.csrf().disable();
+        http.csrf().disable();
         // http.headers().frameOptions().disable();
     }
 

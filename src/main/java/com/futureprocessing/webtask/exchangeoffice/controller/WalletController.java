@@ -32,7 +32,7 @@ public class WalletController {
     @Autowired
     UserController userController;
 
-    @RequestMapping(value = { "/", "/wallet" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/wallet" }, method = RequestMethod.GET)
     public String home(Model model) {
         if (userController.isLoggedIn()) {
             prepareIndexPage(model);
@@ -111,7 +111,7 @@ public class WalletController {
             return "index";
         }
 
-        return "redirect:/";
+        return "redirect:/wallet";
     }
 
     @RequestMapping(value = { "/wallet/sell/*" }, method = RequestMethod.POST)
@@ -132,7 +132,7 @@ public class WalletController {
             return "index";
         }
 
-        return "redirect:/";
+        return "redirect:/wallet";
     }
 
     private void prepareIndexPage(Model model) {
