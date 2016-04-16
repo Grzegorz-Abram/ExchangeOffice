@@ -2,16 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>com.future-processing.webtask</groupId>
-	<artifactId>ExchangeOffice</artifactId>
-	<version>0.1-SNAPSHOT</version>
-
-	<packaging>war</packaging>
-
-	<name>${project.artifactId}</name>
-	<url>https://maven.apache.org/</url>
-
+	
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -19,14 +10,43 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
+	<groupId>com.future-processing.webtask</groupId>
+	<artifactId>ExchangeOffice</artifactId>
+	<version>0.1-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+
+	<name>${project.artifactId}</name>
+	<url>https://maven.apache.org/</url>
+
 	<properties>
 		<java.version>1.8</java.version>
+		<java.ee.version>7.0</java.ee.version>
+		<vaadin.version>7.6.4</vaadin.version>
+		<vaadin.spring.version>1.0.0</vaadin.spring.version>
 		<spring.version>4.2.5.RELEASE</spring.version>
-		<failOnMissingWebXml>false</failOnMissingWebXml>
 		<skipUTs>false</skipUTs>
 		<skipITs>true</skipITs>
 	</properties>
 
+	<modules>
+		<module>ExchangeOffice-common</module>
+		<module>ExchangeOffice-backend</module>
+		<module>ExchangeOffice-ui</module>
+		<module>ExchangeOffice-deploy</module>
+	</modules>
+    
+	<repositories>
+		<repository>
+			<id>spring-libs-snapshot</id>
+			<url>http://repo.spring.io/libs-snapshot</url>
+		</repository>
+		<repository>
+			<id>spring-gemstone-releases</id>
+			<url>http://repo.spring.io/gemstone-release-cache/</url>
+		</repository>
+	</repositories>
+    
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
@@ -54,10 +74,6 @@
 
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
@@ -67,6 +83,13 @@
 					<compilerArgument>-Xlint:all</compilerArgument>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -231,91 +254,4 @@
 		</plugins>
 	</reporting>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.vaadin</groupId>
-				<artifactId>vaadin-bom</artifactId>
-				<version>7.6.4</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-spring-boot-starter</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<!-- Spring ... -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-jdbc</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-		</dependency>
-
-		<!-- DB Connection Pooling -->
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-		</dependency>
-
-		<!-- H2 JDBC Driver -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-		</dependency>
-
-		<!-- Cache -->
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-		</dependency>
-
-		<!-- Test -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<repositories>
-		<repository>
-			<id>spring-libs-snapshot</id>
-			<url>http://repo.spring.io/libs-snapshot</url>
-		</repository>
-		<repository>
-			<id>spring-gemstone-releases</id>
-			<url>http://repo.spring.io/gemstone-release-cache/</url>
-		</repository>
-	</repositories>
 </project>
