@@ -83,4 +83,9 @@ public class Wallets {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return String.format("WalletEntry[Username='%s', Currency='%s', Amount='%s']", username, currency, amount);
+    }
+
 }

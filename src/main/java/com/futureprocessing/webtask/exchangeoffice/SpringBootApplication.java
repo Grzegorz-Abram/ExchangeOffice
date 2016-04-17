@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,7 +22,7 @@ import com.futureprocessing.webtask.exchangeoffice.service.ExchangeRateService;
 import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 
-@EnableAutoConfiguration(exclude = { ErrorMvcAutoConfiguration.class })
+@EnableAutoConfiguration(exclude = { ErrorMvcAutoConfiguration.class, SecurityAutoConfiguration.class })
 @ComponentScan("com.futureprocessing.webtask.exchangeoffice")
 @PropertySource(value = "classpath:application.default.properties")
 public class SpringBootApplication {
