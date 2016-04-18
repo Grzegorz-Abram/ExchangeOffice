@@ -3,4 +3,5 @@ target
 .project
 .settings
 .tern-project
+.checkstyle
 *.log

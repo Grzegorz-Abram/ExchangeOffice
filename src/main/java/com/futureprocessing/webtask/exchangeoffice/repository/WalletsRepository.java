@@ -11,4 +11,6 @@ public interface WalletsRepository extends CrudRepository<Wallets, WalletsId> {
 
     List<Wallets> findByUsername(String username);
 
+    List<Wallets> findByUsernameAndCurrencyStartsWithIgnoreCase(String username, String currency);
+
 }

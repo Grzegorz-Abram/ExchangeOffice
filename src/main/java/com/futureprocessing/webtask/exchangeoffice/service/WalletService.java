@@ -7,6 +7,8 @@ import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
 
 public interface WalletService {
 
+    List<Wallets> loadWalletEntriesByCurrency(String username, String currency);
+
     List<Wallets> loadWallet(String username);
 
     List<Wallets> loadWalletWithPrices(String username, List<Currency> currencies);

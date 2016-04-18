@@ -61,19 +61,31 @@ public class MainUI extends UI {
     private void showLogin() {
         VerticalLayout layout = new LoginForm(this::login);
         Button register = new Button("Register", evt -> {
-            setContent(new RegisterForm());
+            showRegister();
         });
         register.addStyleName(ValoTheme.BUTTON_LINK);
         layout.addComponent(register);
         setContent(layout);
     }
 
+    private void showRegister() {
+        VerticalLayout layout = new RegisterForm();
+        Button login = new Button("Login", evt -> {
+            showLogin();
+        });
+        login.addStyleName(ValoTheme.BUTTON_LINK);
+        layout.addComponent(login);
+        setContent(layout);
+    }
+
     private void showMain() {
         Button logoutButton = new Button("Logout", event -> logout());
+        Button editButton = new Button("Edit wallet", event -> getNavigator().navigateTo("edit"));
 
         HorizontalLayout buttons = new HorizontalLayout();
         buttons.setSpacing(true);
         buttons.addComponent(logoutButton);
+        buttons.addComponent(editButton);
 
         Panel viewContainer = new Panel();
         viewContainer.setSizeFull();

@@ -32,6 +32,11 @@ public class WalletServiceImpl implements WalletService {
     private ExchangeRateService exchangeRateService;
 
     @Override
+    public List<Wallets> loadWalletEntriesByCurrency(String username, String currency) {
+        return walletsRepository.findByUsernameAndCurrencyStartsWithIgnoreCase(username, currency);
+    }
+
+    @Override
     public List<Wallets> loadWallet(String username) {
         return loadWalletWithPrices(username, null);
     }
