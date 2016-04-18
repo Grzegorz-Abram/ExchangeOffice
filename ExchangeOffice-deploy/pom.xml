@@ -13,23 +13,33 @@
 
 	<name>${project.artifactId}</name>
 	<packaging>war</packaging>
-    
+
 	<build>
-		<finalName>${project.parent.artifactId}-${project.version}</finalName>
-    </build>
+		<finalName>${project.parent.artifactId}</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.futureprocessing.webtask.exchangeoffice.SpringBootApplication</mainClass>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.future-processing.webtask</groupId>
 			<artifactId>ExchangeOffice-common</artifactId>
 			<version>${project.version}</version>
-            <type>jar</type>
+			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>com.future-processing.webtask</groupId>
 			<artifactId>ExchangeOffice-ui</artifactId>
 			<version>${project.version}</version>
-			<type>war</type>
+			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>com.future-processing.webtask</groupId>
