@@ -11,11 +11,10 @@
 		</encoder>
 	</appender>
 
-	<root level="WARN">
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
 
 	<logger name="com.futureprocessing.webtask.exchangeoffice" level="DEBUG" />
-	<logger name="org.akhikhl.gretty" level="INFO" />
 
 </configuration>

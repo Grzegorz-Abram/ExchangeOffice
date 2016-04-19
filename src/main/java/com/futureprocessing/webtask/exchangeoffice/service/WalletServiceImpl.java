@@ -38,7 +38,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public List<Wallets> loadWalletWithPrices(String username, List<Currency> currencies) {
-        List<Wallets> wallet = walletsRepository.findByUsername(username);
+        List<Wallets> wallet = walletsRepository.findByUsernameOrderByCurrency(username);
 
         for (Wallets entry : wallet) {
             Currency currency;

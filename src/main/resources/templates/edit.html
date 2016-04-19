@@ -4,12 +4,12 @@
 <title th:text="#{label.edit.title}">sample_title</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link href="../static/css/bootstrap.min.css" th:href="@{../css/bootstrap.min.css}" rel="stylesheet" media="screen" />
-<link href="../static/css/main.css" th:href="@{../css/main.css}" rel="stylesheet" media="screen" />
-<script src="../static/js/jquery.min.js" th:src="@{../js/jquery.min.js}"></script>
-<script src="../static/js/bootstrap.min.js" th:src="@{../js/bootstrap.min.js}"></script>
 <link href="../static/css/bootstrap.min.css" th:href="@{../../css/bootstrap.min.css}" rel="stylesheet" media="screen" />
+<link href="../static/css/main.css" th:href="@{../css/main.css}" rel="stylesheet" media="screen" />
 <link href="../static/css/main.css" th:href="@{../../css/main.css}" rel="stylesheet" media="screen" />
+<script src="../static/js/jquery.min.js" th:src="@{../js/jquery.min.js}"></script>
 <script src="../static/js/jquery.min.js" th:src="@{../../js/jquery.min.js}"></script>
+<script src="../static/js/bootstrap.min.js" th:src="@{../js/bootstrap.min.js}"></script>
 <script src="../static/js/bootstrap.min.js" th:src="@{../../js/bootstrap.min.js}"></script>
 <script type="text/javascript">
 	//<![CDATA[
@@ -62,8 +62,10 @@
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-						<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+						aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="#">Exchange</a>
 				</div>
@@ -88,23 +90,23 @@
 					<table class="table table-bordered table-condensed">
 						<thead>
 							<tr>
-								<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
+								<th th:text="#{label.edit.myWallet.currencyHeader}" class="col-currency">currencyHeader</th>
 								<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
-								<th th:text="#{label.edit.myWallet.operation}">operation</th>
+								<th th:text="#{label.edit.myWallet.operation}" class="col-actions">operation</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="entry : ${newWallet}">
-								<td><select id="code" th:field="*{currency}">
+								<td><select id="code" th:field="*{currency}" class="form-control">
 										<option th:if="${not #lists.isEmpty(allCurrencies)}" th:each="type : ${allCurrencies}" th:value="${type.code}"
 											th:text="#{${'option.edit.' + type.code}}">currency</option>
-										<option th:if="${#lists.isEmpty(allCurrencies)}" th:each="type : ${ {'USD', 'EUR', 'CHF', 'RUB', 'CZK', 'GBP'} }" th:value="${type}"
+										<option th:if="${#lists.isEmpty(allCurrencies)}"
+											th:each="type : ${ {'CHF', 'CZK', 'EUR', 'GBP', 'RUB', 'USD'} }" th:value="${type}"
 											th:text="#{${'option.edit.' + type}}">currency</option>
 								</select></td>
-								<td><input id="amount" type="text" th:field="*{amount}" /></td>
-								<td>
-								<input type="submit" class="confirm btn btn-default"
-						th:attr="title=#{message.edit.myWallet.add.confirm} + ' #value# #code# ' + '?', error=#{message.edit.myWallet.add.error}, value=#{label.edit.submit}" />
+								<td><input id="amount" type="text" th:field="*{amount}" class="form-control" /></td>
+								<td><input type="submit" class="confirm btn btn-default btn-block"
+									th:attr="title=#{message.edit.myWallet.add.confirm} + ' #value# #code# ' + '?', error=#{message.edit.myWallet.add.error}, value=#{label.edit.submit}" />
 								</td>
 							</tr>
 						</tbody>
@@ -122,17 +124,19 @@
 				<table class="table table-bordered table-condensed">
 					<thead>
 						<tr>
-							<th th:text="#{label.edit.myWallet.currencyHeader}">currencyHeader</th>
+							<th th:text="#{label.edit.myWallet.currencyHeader}" class="col-currency">currencyHeader</th>
 							<th th:text="#{label.edit.myWallet.amountHeader}">amountHeader</th>
-							<th th:text="#{label.edit.myWallet.operation}">operation</th>
+							<th th:text="#{label.edit.myWallet.operation}" class="col-actions" colspan="2">operation</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="entry : ${wallet}">
 							<td th:text="${entry.currency}"></td>
 							<td th:text="${entry.amount}"></td>
-							<td><a th:href="@{/wallet/edit/{currency}(currency=${entry.currency})}" class="btn btn-default"><span th:text="#{label.edit.myWallet.edit}"></span></a> <a
-								th:href="@{/wallet/delete/{currency}(currency=${entry.currency})}" class="btn btn-default"> <span th:text="#{label.edit.myWallet.delete}"></span></a></td>
+							<td class="col-actions"><a th:href="@{/wallet/edit/{currency}(currency=${entry.currency})}"
+								class="btn btn-default btn-block"><span th:text="#{label.edit.myWallet.edit}"></span></a></td>
+							<td class="col-actions"><a th:href="@{/wallet/delete/{currency}(currency=${entry.currency})}"
+								class="btn btn-default btn-block"> <span th:text="#{label.edit.myWallet.delete}"></span></a></td>
 						</tr>
 					</tbody>
 				</table>

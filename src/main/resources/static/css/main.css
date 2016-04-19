@@ -5,14 +5,30 @@ body {
 
 thead {
     background-color: lightgrey;
-} 
+}
+
+.table tbody>tr>td{
+    vertical-align: middle;
+}
+
+.table thead>tr>th.col-currency {
+	width: 90px;
+}
+
+.table thead>tr>th.col-actions {
+	width: 80px;
+}
+
+.table tbody>tr>td.col-actions {
+	width: 80px;
+}
 
 .navbar {
 	margin-bottom: 20px;
 }
 
 .panel-edit {
-	max-width: 330px;
+	max-width: 350px;
 	margin: 0 auto;
 	margin-top: 20px;
 	margin-bottom: 20px;
