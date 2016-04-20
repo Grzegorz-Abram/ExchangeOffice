@@ -5,10 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,7 +25,7 @@ public class UserController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout, Model model) {
-        if (isLoggedIn()) {
+        if (userService.isLoggedIn()) {
             return "index";
         } else {
             if (error != null) {
@@ -46,19 +42,14 @@ public class UserController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-        }
-
+        // TODO
         return "redirect:/login?logout";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String register(Model model) {
-        if (isLoggedIn()) {
-            return "redirect:/";
+        if (userService.isLoggedIn()) {
+            return "redirect:/wallet";
         } else {
             model.addAttribute("user", new Users());
 
@@ -68,32 +59,12 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String saveUser(@ModelAttribute("user") Users user) {
-        if (isLoggedIn()) {
-            return "redirect:/";
+        if (userService.isLoggedIn()) {
+            return "redirect:/wallet";
         } else {
             userService.registerNewUserAccount(user);
 
-            return "redirect:/";
-        }
-    }
-
-    String getUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
-    boolean isLoggedIn() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null) {
-            return false;
-        } else {
-            for (GrantedAuthority a : auth.getAuthorities()) {
-                if (a.getAuthority().equals("ROLE_ANONYMOUS")) {
-                    return false;
-                }
-            }
-
-            return true;
+            return "redirect:/wallet";
         }
     }
 

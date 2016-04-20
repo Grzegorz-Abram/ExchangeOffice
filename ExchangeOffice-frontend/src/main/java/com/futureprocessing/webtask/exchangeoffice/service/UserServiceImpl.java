@@ -1,45 +1,46 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import com.futureprocessing.webtask.exchangeoffice.model.Authorities;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
-import com.futureprocessing.webtask.exchangeoffice.repository.AuthoritiesRepository;
-import com.futureprocessing.webtask.exchangeoffice.repository.UsersRepository;
 
 @Service("userService")
-@Transactional
 @PropertySource(value = "classpath:application.default.properties")
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private Environment environment;
+    RestTemplate restTemplate;
+
+    private String url;
 
     @Autowired
-    protected UsersRepository usersRepository;
-
-    @Autowired
-    protected AuthoritiesRepository authoritiesRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserServiceImpl(Environment environment) {
+        this.url = environment.getRequiredProperty("default.userService.url");
+    }
 
     @Override
     public void registerNewUserAccount(Users user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setEnabled(true);
-        usersRepository.save(user);
+        restTemplate.postForObject(url + "/add", user, Boolean.class);
+    }
 
-        Authorities authority = new Authorities();
-        authority.setUsername(user.getUsername());
-        authority.setAuthority(environment.getRequiredProperty("default.user.role"));
-        authoritiesRepository.save(authority);
+    @Override
+    public String getUsername() {
+        Users user = restTemplate.getForObject(url + "/current/get", Users.class);
+
+        if (user == null) {
+            return null;
+        } else {
+            return user.getUsername();
+        }
+    }
+
+    @Override
+    public boolean isLoggedIn() {
+        return restTemplate.getForObject(url + "/current/get", Users.class) == null ? false : true;
     }
 
 }

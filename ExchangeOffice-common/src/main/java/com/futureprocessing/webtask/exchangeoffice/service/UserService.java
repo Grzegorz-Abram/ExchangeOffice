@@ -6,4 +6,8 @@ public interface UserService {
 
     void registerNewUserAccount(Users user);
 
+    String getUsername();
+
+    boolean isLoggedIn();
+
 }

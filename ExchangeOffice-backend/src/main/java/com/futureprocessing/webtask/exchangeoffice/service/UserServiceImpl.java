@@ -42,4 +42,16 @@ public class UserServiceImpl implements UserService {
         authoritiesRepository.save(authority);
     }
 
+    @Override
+    public String getUsername() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isLoggedIn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

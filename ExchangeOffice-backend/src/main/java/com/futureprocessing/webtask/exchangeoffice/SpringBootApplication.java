@@ -17,9 +17,6 @@ import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
 import com.futureprocessing.webtask.exchangeoffice.repository.AuthoritiesRepository;
 import com.futureprocessing.webtask.exchangeoffice.repository.UsersRepository;
 import com.futureprocessing.webtask.exchangeoffice.repository.WalletsRepository;
-import com.futureprocessing.webtask.exchangeoffice.service.ExchangeRateService;
-import com.futureprocessing.webtask.exchangeoffice.service.UserService;
-import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 
 @EnableAutoConfiguration(exclude = { ErrorMvcAutoConfiguration.class })
 @ComponentScan("com.futureprocessing.webtask.exchangeoffice")
@@ -28,15 +25,6 @@ public class SpringBootApplication {
 
     @Autowired
     private Environment environment;
-
-    @Autowired
-    WalletService walletService;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    ExchangeRateService exchangeRateService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
