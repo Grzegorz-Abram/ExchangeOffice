@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<!--
+
+	This file specifies a findbugs filter for including reports that should be considered errors.
+	The format of this file is documented at: 
+	
+	http://findbugs.sourceforge.net/manual/filter.html
+	
+	When possible, please specify the full names of the bug codes, using the pattern attribute, 
+	to make it clearer what reports are being suppressed. 
+	You can find a listing of codes at: 
+	
+	http://findbugs.sourceforge.net/bugDescriptions.html
+
+-->
+
+<FindBugsFilter>
+	<Match>
+		<Package name="~com[.]futureprocessing[.]webtask[.]exchangeoffice([.].*)?" />
+	</Match>
+</FindBugsFilter>
