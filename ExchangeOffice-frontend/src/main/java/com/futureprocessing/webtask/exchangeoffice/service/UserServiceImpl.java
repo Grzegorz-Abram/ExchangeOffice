@@ -1,5 +1,7 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -23,24 +25,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerNewUserAccount(Users user) {
+    public List<Users> findAllUsers() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Users findByUsername(String username) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isUserExist(Users user) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void saveUser(Users user) {
         restTemplate.postForObject(url + "/add", user, Boolean.class);
     }
 
     @Override
-    public String getUsername() {
-        Users user = restTemplate.getForObject(url + "/current/get", Users.class);
+    public void updateUser(Users currentUser) {
+        // TODO Auto-generated method stub
 
-        if (user == null) {
-            return null;
-        } else {
-            return user.getUsername();
-        }
     }
 
     @Override
-    public boolean isLoggedIn() {
-        return restTemplate.getForObject(url + "/current/get", Users.class) == null ? false : true;
+    public void deleteAllUsers() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void deleteUserByUsername(String username) {
+        // TODO Auto-generated method stub
+
     }
 
 }

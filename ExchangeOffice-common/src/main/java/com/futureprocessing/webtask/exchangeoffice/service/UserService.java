@@ -1,13 +1,23 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
+import java.util.List;
+
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
 
 public interface UserService {
 
-    void registerNewUserAccount(Users user);
+    List<Users> findAllUsers();
 
-    String getUsername();
+    Users findByUsername(String username);
 
-    boolean isLoggedIn();
+    boolean isUserExist(Users user);
+
+    void saveUser(Users user);
+
+    void updateUser(Users currentUser);
+
+    void deleteAllUsers();
+
+    void deleteUserByUsername(String username);
 
 }

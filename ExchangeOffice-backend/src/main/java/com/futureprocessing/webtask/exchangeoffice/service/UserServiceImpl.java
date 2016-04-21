@@ -1,5 +1,7 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,22 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public void registerNewUserAccount(Users user) {
+    public List<Users> findAllUsers() {
+        return (List<Users>) usersRepository.findAll();
+    }
+
+    @Override
+    public Users findByUsername(String username) {
+        return usersRepository.findOne(username);
+    }
+
+    @Override
+    public boolean isUserExist(Users user) {
+        return usersRepository.exists(user.getUsername());
+    }
+
+    @Override
+    public void saveUser(Users user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
         usersRepository.save(user);
@@ -43,15 +60,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUsername() {
-        // TODO Auto-generated method stub
-        return null;
+    public void updateUser(Users currentUser) {
+        currentUser.setPassword(passwordEncoder.encode(currentUser.getPassword()));
+        usersRepository.save(currentUser);
     }
 
     @Override
-    public boolean isLoggedIn() {
-        // TODO Auto-generated method stub
-        return false;
+    public void deleteAllUsers() {
+        usersRepository.deleteAll();
+        authoritiesRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteUserByUsername(String username) {
+        usersRepository.delete(username);
+        authoritiesRepository.delete(username);
     }
 
 }

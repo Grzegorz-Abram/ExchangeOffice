@@ -25,7 +25,7 @@ public class UserController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout, Model model) {
-        if (userService.isLoggedIn()) {
+        if (isLoggedIn()) {
             return "index";
         } else {
             if (error != null) {
@@ -48,7 +48,7 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String register(Model model) {
-        if (userService.isLoggedIn()) {
+        if (isLoggedIn()) {
             return "redirect:/wallet";
         } else {
             model.addAttribute("user", new Users());
@@ -59,13 +59,35 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String saveUser(@ModelAttribute("user") Users user) {
-        if (userService.isLoggedIn()) {
+        if (isLoggedIn()) {
             return "redirect:/wallet";
         } else {
-            userService.registerNewUserAccount(user);
+            userService.saveUser(user);
 
             return "redirect:/wallet";
         }
+    }
+
+    String getUsername() {
+        // return SecurityContextHolder.getContext().getAuthentication().getName();
+        return null;
+    }
+
+    boolean isLoggedIn() {
+        // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //
+        // if (auth == null) {
+        // return false;
+        // } else {
+        // for (GrantedAuthority a : auth.getAuthorities()) {
+        // if (a.getAuthority().equals("ROLE_ANONYMOUS")) {
+        // return false;
+        // }
+        // }
+        //
+        // return true;
+        // }
+        return true;
     }
 
 }

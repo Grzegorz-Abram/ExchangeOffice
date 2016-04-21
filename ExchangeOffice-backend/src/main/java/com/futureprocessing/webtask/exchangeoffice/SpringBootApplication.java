@@ -19,7 +19,7 @@ import com.futureprocessing.webtask.exchangeoffice.repository.UsersRepository;
 import com.futureprocessing.webtask.exchangeoffice.repository.WalletsRepository;
 
 @EnableAutoConfiguration(exclude = { ErrorMvcAutoConfiguration.class })
-@ComponentScan("com.futureprocessing.webtask.exchangeoffice")
+@ComponentScan
 @PropertySource(value = "classpath:application.default.properties")
 public class SpringBootApplication {
 

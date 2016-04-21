@@ -1,100 +1,102 @@
 package com.futureprocessing.webtask.exchangeoffice.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
 import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 
 @RestController
-@ComponentScan
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    UserService userService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(@RequestParam(value = "error", required = false) String error,
-            @RequestParam(value = "logout", required = false) String logout, Model model) {
-        if (isLoggedIn()) {
-            return "index";
-        } else {
-            if (error != null) {
-                model.addAttribute("error", true);
-            }
-
-            if (logout != null) {
-                model.addAttribute("logout", true);
-            }
-
-            return "login";
+    @RequestMapping(value = "/user/", method = RequestMethod.GET)
+    public ResponseEntity<List<Users>> listAllUsers() {
+        List<Users> users = userService.findAllUsers();
+        if (users.isEmpty()) {
+            return new ResponseEntity<List<Users>>(HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<List<Users>>(users, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
+    @RequestMapping(value = "/user/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Users> getUser(@PathVariable("username") String username) {
+        System.out.println("Fetching User with username " + username);
+        Users user = userService.findByUsername(username);
+        if (user == null) {
+            System.out.println("User with username " + username + " not found");
+            return new ResponseEntity<Users>(HttpStatus.NOT_FOUND);
         }
-
-        return "redirect:/login?logout";
+        return new ResponseEntity<Users>(user, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String register(Model model) {
-        if (isLoggedIn()) {
-            return "redirect:/";
-        } else {
-            model.addAttribute("user", new Users());
+    @RequestMapping(value = "/user/", method = RequestMethod.POST)
+    public ResponseEntity<Void> createUser(@RequestBody Users user, UriComponentsBuilder ucBuilder) {
+        System.out.println("Creating User " + user.getUsername());
 
-            return "register";
+        if (userService.isUserExist(user)) {
+            System.out.println("A User with username " + user.getUsername() + " already exist");
+            return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
+
+        userService.saveUser(user);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ucBuilder.path("/user/{username}").buildAndExpand(user.getUsername()).toUri());
+        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String saveUser(@ModelAttribute("user") Users user) {
-        if (isLoggedIn()) {
-            return "redirect:/";
-        } else {
-            userService.registerNewUserAccount(user);
+    @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
+    public ResponseEntity<Users> updateUser(@PathVariable("username") String username, @RequestBody Users user) {
+        System.out.println("Updating User " + username);
 
-            return "redirect:/";
+        Users currentUser = userService.findByUsername(username);
+
+        if (currentUser == null) {
+            System.out.println("User with username " + username + " not found");
+            return new ResponseEntity<Users>(HttpStatus.NOT_FOUND);
         }
+
+        currentUser.setPassword(user.getPassword());
+        currentUser.setEnabled(user.isEnabled());
+
+        userService.updateUser(currentUser);
+        return new ResponseEntity<Users>(currentUser, HttpStatus.OK);
     }
 
-    String getUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+    @RequestMapping(value = "/user/{username}", method = RequestMethod.DELETE)
+    public ResponseEntity<Users> deleteUser(@PathVariable("username") String username) {
+        System.out.println("Fetching & Deleting User with username " + username);
+
+        Users user = userService.findByUsername(username);
+        if (user == null) {
+            System.out.println("Unable to delete. User with username " + username + " not found");
+            return new ResponseEntity<Users>(HttpStatus.NOT_FOUND);
+        }
+
+        userService.deleteUserByUsername(username);
+        return new ResponseEntity<Users>(HttpStatus.NO_CONTENT);
     }
 
-    boolean isLoggedIn() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    @RequestMapping(value = "/user/", method = RequestMethod.DELETE)
+    public ResponseEntity<Users> deleteAllUsers() {
+        System.out.println("Deleting All Users");
 
-        if (auth == null) {
-            return false;
-        } else {
-            for (GrantedAuthority a : auth.getAuthorities()) {
-                if (a.getAuthority().equals("ROLE_ANONYMOUS")) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+        userService.deleteAllUsers();
+        return new ResponseEntity<Users>(HttpStatus.NO_CONTENT);
     }
 
 }

@@ -17,7 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Currency;
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
-import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 
 @Controller
@@ -25,7 +24,7 @@ import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 public class WalletController {
 
     @Autowired
-    UserService userService;
+    UserController userController;
 
     @Autowired
     private WalletService walletService;
@@ -35,7 +34,7 @@ public class WalletController {
 
     @RequestMapping(value = { "/", "/wallet" }, method = RequestMethod.GET)
     public String home(Model model) {
-        if (userService.isLoggedIn()) {
+        if (userController.isLoggedIn()) {
             prepareIndexPage(model);
         }
 
@@ -56,7 +55,7 @@ public class WalletController {
             return "edit";
         }
 
-        walletService.saveWallet(userService.getUsername(), newWallet);
+        walletService.saveWallet(userController.getUsername(), newWallet);
 
         return "redirect:/wallet/edit";
     }
@@ -66,7 +65,7 @@ public class WalletController {
             final RedirectAttributes redirectAttributes, Model model) {
 
         if (operation.equals("delete")) {
-            walletService.deleteFromWallet(userService.getUsername(), currency);
+            walletService.deleteFromWallet(userController.getUsername(), currency);
         } else if (operation.equals("edit")) {
             prepareEditPage(model, currency);
             return "edit";
@@ -104,7 +103,7 @@ public class WalletController {
         currency.setAmount(currency.getAmount() * currency.getUnit());
 
         try {
-            walletService.buyCurrency(userService.getUsername(), currency);
+            walletService.buyCurrency(userController.getUsername(), currency);
         } catch (Exception e) {
             prepareIndexPage(model);
             addErrorAttribute(model, e);
@@ -125,7 +124,7 @@ public class WalletController {
         }
 
         try {
-            walletService.sellCurrency(userService.getUsername(), currency);
+            walletService.sellCurrency(userController.getUsername(), currency);
         } catch (Exception e) {
             prepareIndexPage(model);
             addErrorAttribute(model, e);
@@ -137,7 +136,7 @@ public class WalletController {
     }
 
     private void prepareIndexPage(Model model) {
-        List<Wallets> wallet = walletService.loadWalletWithPrices(userService.getUsername(), exchangeRateController.getCurrencies());
+        List<Wallets> wallet = walletService.loadWalletWithPrices(userController.getUsername(), exchangeRateController.getCurrencies());
 
         model.addAttribute("currencies", exchangeRateController.getCurrencies());
         model.addAttribute("publicationDate", exchangeRateController.getCurrenciesPublicationDate());
@@ -157,8 +156,8 @@ public class WalletController {
     }
 
     private void prepareEditPage(Model model, String currency) {
-        model.addAttribute("newWallet", walletService.findWalletEntry(userService.getUsername(), currency));
-        model.addAttribute("wallet", walletService.loadWallet(userService.getUsername()).stream()
+        model.addAttribute("newWallet", walletService.findWalletEntry(userController.getUsername(), currency));
+        model.addAttribute("wallet", walletService.loadWallet(userController.getUsername()).stream()
                 .filter(w -> !w.getCurrency().equals("PLN"))
                 .filter(w -> w.getAmount() > 0.0)
                 .collect(Collectors.toList()));
