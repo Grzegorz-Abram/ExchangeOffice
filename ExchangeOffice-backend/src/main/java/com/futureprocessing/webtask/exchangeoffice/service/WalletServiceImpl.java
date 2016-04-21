@@ -28,9 +28,6 @@ public class WalletServiceImpl implements WalletService {
     @Autowired
     WalletsRepository walletsRepository;
 
-    @Autowired
-    private ExchangeRateService exchangeRateService;
-
     @Override
     public List<Wallets> loadWallet(String username) {
         return loadWalletWithPrices(username, null);
@@ -103,10 +100,6 @@ public class WalletServiceImpl implements WalletService {
         logger.debug("    BANK: " + cashFromBank.getAmount() + " " + cashFromBank.getCurrency());
 
         Wallets plnFromUser = findWalletEntry(username, "PLN");
-        currency.setSellPrice(exchangeRateService.getExchangeRate().getItems().stream()
-                .filter(c -> c.getCode().equals(currency.getCode()))
-                .findFirst().get()
-                .getSellPrice());
 
         logger.debug("    Actual purchase price: " + currency.getUnit() + " " + currency.getCode() + " = " + currency.getSellPrice() + " PLN");
         logger.debug("    USER: " + plnFromUser.getAmount() + " " + plnFromUser.getCurrency() + " -> "
@@ -164,10 +157,6 @@ public class WalletServiceImpl implements WalletService {
         logger.debug("    USER: " + cashFromUser.getAmount() + " " + cashFromUser.getCurrency());
 
         Wallets plnFromBank = findWalletEntry(environment.getRequiredProperty("default.bank.username"), "PLN");
-        currency.setPurchasePrice(exchangeRateService.getExchangeRate().getItems().stream()
-                .filter(c -> c.getCode().equals(currency.getCode()))
-                .findFirst().get()
-                .getPurchasePrice());
 
         logger.debug("    Actual sell price: " + currency.getUnit() + " " + currency.getCode() + " = " + currency.getPurchasePrice() + " PLN");
         logger.debug("    BANK: " + plnFromBank.getAmount() + " " + plnFromBank.getCurrency() + " -> "
