@@ -146,7 +146,8 @@ public class WalletController {
                 .collect(Collectors.toList()));
         model.addAttribute("amountPLN", wallet.stream()
                 .filter(w -> w.getCurrency().equals("PLN"))
-                .findFirst().get()
+                .findFirst()
+                .orElseGet(() -> new Wallets())
                 .getAmount());
     }
 
