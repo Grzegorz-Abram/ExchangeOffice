@@ -1,0 +1,39 @@
+server:
+  context-path: /ExchangeOffice-backend
+  port: 8081
+
+spring:
+  resources:
+    chain:
+      enabled: true
+  jpa:
+    databasePlatform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: sa
+    poolName: SpringBootHikariCP
+    maximumPoolSize: 5
+    minimumIdle: 3
+    maxLifetime: 2000000
+    connectionTimeout: 30000
+    idleTimeout: 30000
+    pool-prepared-statements: true
+    max-open-prepared-statements: 250
+  thymeleaf:
+    cache: false
+    mode: HTML5
+
+security:
+  oauth2:
+    client:
+      client-id: acme
+      client-secret: acmesecret
+      scope: read,write
+      auto-approve-scopes: '.*'
+
+logging:
+  level:
+    org.springframework.security: DEBUG

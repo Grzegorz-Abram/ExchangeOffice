@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableCaching
@@ -18,7 +17,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(SpringBootApplication.class);
+        return application.sources(Application.class);
     }
 
     @Bean(name = "messageSource")
@@ -27,12 +26,6 @@ public class ServletInitializer extends SpringBootServletInitializer {
         messageSource.setBasenames("i18n/messages");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
-    }
-
-    @Bean(name = "restTemplate")
-    public RestTemplate getRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate;
     }
 
     @Bean

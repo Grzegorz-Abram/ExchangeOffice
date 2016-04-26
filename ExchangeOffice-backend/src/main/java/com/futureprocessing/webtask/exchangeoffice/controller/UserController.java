@@ -1,6 +1,9 @@
 package com.futureprocessing.webtask.exchangeoffice.controller;
 
+import java.security.Principal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +25,13 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @RequestMapping(value = "/user/current", method = RequestMethod.GET)
+    public Map<String, String> user(Principal principal) {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("name", principal.getName());
+        return map;
+    }
 
     @RequestMapping(value = "/user/", method = RequestMethod.GET)
     public ResponseEntity<List<Users>> listAllUsers() {
