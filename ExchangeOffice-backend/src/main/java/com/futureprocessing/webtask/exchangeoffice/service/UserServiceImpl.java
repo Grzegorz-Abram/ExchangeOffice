@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.futureprocessing.webtask.exchangeoffice.model.Authorities;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
+import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
 import com.futureprocessing.webtask.exchangeoffice.repository.AuthoritiesRepository;
 import com.futureprocessing.webtask.exchangeoffice.repository.UsersRepository;
+import com.futureprocessing.webtask.exchangeoffice.repository.WalletsRepository;
 
 @Service("userService")
 @Transactional
@@ -28,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     protected AuthoritiesRepository authoritiesRepository;
+
+    @Autowired
+    protected WalletsRepository walletsRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -53,10 +58,9 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         usersRepository.save(user);
 
-        Authorities authority = new Authorities();
-        authority.setUsername(user.getUsername());
-        authority.setAuthority(environment.getRequiredProperty("default.user.role"));
-        authoritiesRepository.save(authority);
+        authoritiesRepository.save(new Authorities(user.getUsername(), environment.getRequiredProperty("default.user.role")));
+
+        walletsRepository.save(new Wallets(user.getUsername(), "PLN", environment.getRequiredProperty("default.user.amount.PLN", Double.class)));
     }
 
     @Override
