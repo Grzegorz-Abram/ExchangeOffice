@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.futureprocessing.webtask.exchangeoffice.model.Authorities;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
+import com.futureprocessing.webtask.exchangeoffice.model.WalletsId;
 import com.futureprocessing.webtask.exchangeoffice.repository.AuthoritiesRepository;
 import com.futureprocessing.webtask.exchangeoffice.repository.UsersRepository;
 import com.futureprocessing.webtask.exchangeoffice.repository.WalletsRepository;
@@ -57,9 +58,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
         usersRepository.save(user);
-
         authoritiesRepository.save(new Authorities(user.getUsername(), environment.getRequiredProperty("default.user.role")));
-
         walletsRepository.save(new Wallets(user.getUsername(), "PLN", environment.getRequiredProperty("default.user.amount.PLN", Double.class)));
     }
 
@@ -73,12 +72,16 @@ public class UserServiceImpl implements UserService {
     public void deleteAllUsers() {
         usersRepository.deleteAll();
         authoritiesRepository.deleteAll();
+        walletsRepository.deleteAll();
     }
 
     @Override
     public void deleteUserByUsername(String username) {
         usersRepository.delete(username);
         authoritiesRepository.delete(username);
+        for (Wallets walletEntry : walletsRepository.findByUsernameOrderByCurrency(username)) {
+            walletsRepository.delete(new WalletsId(username, walletEntry.getCurrency()));
+        }
     }
 
 }

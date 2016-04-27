@@ -7,18 +7,28 @@ import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
 
 public interface WalletService {
 
-    List<Wallets> loadWallet(String username);
+    List<Wallets> findByUsername(String username);
 
-    List<Wallets> loadWalletWithPrices(String username, List<Currency> currencies);
+    Wallets findByUsernameAndCurrency(String username, String currency);
 
-    void saveWallet(String username, Wallets wallet);
+    void saveWallet(Wallets walletEntry);
 
-    void deleteFromWallet(String username, String currency);
+    void deleteWalletByUsernameAndCurrency(String username, String currency);
 
-    Wallets findWalletEntry(String username, String currency);
+    void deleteAllWalletEntries(String username);
 
-    void buyCurrency(String name, Currency currency) throws Exception;
-
-    void sellCurrency(String name, Currency currency) throws Exception;
+//    List<Wallets> loadWallet(String username);
+//
+//    List<Wallets> loadWalletWithPrices(String username, List<Currency> currencies);
+//
+//    void saveWallet(String username, Wallets wallet);
+//
+//    void deleteFromWallet(String username, String currency);
+//
+//    Wallets findWalletEntry(String username, String currency);
+//
+//    void buyCurrency(String name, Currency currency) throws Exception;
+//
+//    void sellCurrency(String name, Currency currency) throws Exception;
 
 }

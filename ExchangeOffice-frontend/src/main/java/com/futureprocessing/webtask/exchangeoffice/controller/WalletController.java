@@ -55,7 +55,7 @@ public class WalletController {
             return "edit";
         }
 
-        walletService.saveWallet(userController.getUsername(), newWallet);
+        walletService.saveWallet(newWallet);
 
         return "redirect:/wallet/edit";
     }
@@ -65,7 +65,7 @@ public class WalletController {
             final RedirectAttributes redirectAttributes, Model model) {
 
         if (operation.equals("delete")) {
-            walletService.deleteFromWallet(userController.getUsername(), currency);
+            walletService.deleteWalletByUsernameAndCurrency(userController.getUsername(), currency);
         } else if (operation.equals("edit")) {
             prepareEditPage(model, currency);
             return "edit";
@@ -103,7 +103,7 @@ public class WalletController {
         currency.setAmount(currency.getAmount() * currency.getUnit());
 
         try {
-            walletService.buyCurrency(userController.getUsername(), currency);
+            // walletService.buyCurrency(userController.getUsername(), currency);
         } catch (Exception e) {
             prepareIndexPage(model);
             addErrorAttribute(model, e);
@@ -124,7 +124,7 @@ public class WalletController {
         }
 
         try {
-            walletService.sellCurrency(userController.getUsername(), currency);
+            // walletService.sellCurrency(userController.getUsername(), currency);
         } catch (Exception e) {
             prepareIndexPage(model);
             addErrorAttribute(model, e);
@@ -136,7 +136,7 @@ public class WalletController {
     }
 
     private void prepareIndexPage(Model model) {
-        List<Wallets> wallet = walletService.loadWalletWithPrices(userController.getUsername(), exchangeRateController.getCurrencies());
+        List<Wallets> wallet = walletService.findByUsername(userController.getUsername());
 
         model.addAttribute("currencies", exchangeRateController.getCurrencies());
         model.addAttribute("publicationDate", exchangeRateController.getCurrenciesPublicationDate());
@@ -156,8 +156,8 @@ public class WalletController {
     }
 
     private void prepareEditPage(Model model, String currency) {
-        model.addAttribute("newWallet", walletService.findWalletEntry(userController.getUsername(), currency));
-        model.addAttribute("wallet", walletService.loadWallet(userController.getUsername()).stream()
+        model.addAttribute("newWallet", walletService.findByUsernameAndCurrency(userController.getUsername(), currency));
+        model.addAttribute("wallet", walletService.findByUsername(userController.getUsername()).stream()
                 .filter(w -> !w.getCurrency().equals("PLN"))
                 .filter(w -> w.getAmount() > 0.0)
                 .collect(Collectors.toList()));

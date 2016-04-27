@@ -9,8 +9,6 @@ import com.futureprocessing.webtask.exchangeoffice.model.WalletsId;
 
 public interface WalletsRepository extends CrudRepository<Wallets, WalletsId> {
 
-    List<Wallets> findByUsername(String username);
-
     List<Wallets> findByUsernameOrderByCurrency(String username);
 
 }

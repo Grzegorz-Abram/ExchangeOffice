@@ -12,7 +12,7 @@ public class OAuth2SecurityConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .antMatcher("/user/**").authorizeRequests()
+                .antMatcher("/**").authorizeRequests()
                 .anyRequest().authenticated();
     }
 

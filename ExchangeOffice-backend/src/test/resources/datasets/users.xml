@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<USERS username="user1" password="pass1" enabled="true" />
+	<USERS username="user2" password="pass2" enabled="true" />
+	<USERS username="user3" password="pass3" enabled="false" />
+	<USERS username="user4" password="pass4" enabled="false" />
+</dataset>
