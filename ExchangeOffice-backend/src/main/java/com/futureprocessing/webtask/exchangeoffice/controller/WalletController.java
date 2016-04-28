@@ -2,8 +2,6 @@ package com.futureprocessing.webtask.exchangeoffice.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.futureprocessing.webtask.exchangeoffice.model.Currency;
 import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
 import com.futureprocessing.webtask.exchangeoffice.service.WalletService;
 
@@ -62,7 +59,8 @@ public class WalletController {
     }
 
     @RequestMapping(value = "/wallet/{username}/{currency}", method = RequestMethod.PUT)
-    public ResponseEntity<Wallets> updateWalletEntry(@PathVariable("username") String username, @PathVariable("currency") String currency, @RequestBody Wallets walletEntry) {
+    public ResponseEntity<Wallets> updateWalletEntry(@PathVariable("username") String username, @PathVariable("currency") String currency,
+            @RequestBody Wallets walletEntry) {
         Wallets currentWalletEntry = walletService.findByUsernameAndCurrency(username, currency);
         if (currentWalletEntry == null) {
             return new ResponseEntity<Wallets>(HttpStatus.NOT_FOUND);
@@ -98,39 +96,31 @@ public class WalletController {
         return new ResponseEntity<Wallets>(HttpStatus.NO_CONTENT);
     }
 
-
-
-
-
-
-
-
-
-//    @RequestMapping(value = { "/wallet/save/{username}" }, method = RequestMethod.POST)
-//    public void saveWalletEntry(@PathVariable("username") String username, @Valid Wallets newWallet) {
-//        walletService.saveWallet(username, newWallet);
-//    }
-//
-//    @RequestMapping(value = "/wallet/delete/{username}/{currency}", method = RequestMethod.DELETE)
-//    public void operationsOnWalletEntry(@PathVariable("username") String username, @PathVariable("currency") String currency) {
-//        walletService.deleteFromWallet(username, currency);
-//    }
-//
-//    @RequestMapping(value = { "/wallet/buy/{username}" }, method = RequestMethod.POST)
-//    public void buyWalletEntry(@PathVariable("username") String username, @Valid Currency currency) {
-//        try {
-//            currency.setAmount(currency.getAmount() * currency.getUnit());
-//            walletService.buyCurrency(username, currency);
-//        } catch (Exception e) {
-//        }
-//    }
-//
-//    @RequestMapping(value = { "/wallet/sell/{username}" }, method = RequestMethod.POST)
-//    public void sellWalletEntry(@PathVariable("username") String username, @Valid Currency currency) {
-//        try {
-//            walletService.sellCurrency(username, currency);
-//        } catch (Exception e) {
-//        }
-//    }
+    // @RequestMapping(value = { "/wallet/save/{username}" }, method = RequestMethod.POST)
+    // public void saveWalletEntry(@PathVariable("username") String username, @Valid Wallets newWallet) {
+    // walletService.saveWallet(username, newWallet);
+    // }
+    //
+    // @RequestMapping(value = "/wallet/delete/{username}/{currency}", method = RequestMethod.DELETE)
+    // public void operationsOnWalletEntry(@PathVariable("username") String username, @PathVariable("currency") String currency) {
+    // walletService.deleteFromWallet(username, currency);
+    // }
+    //
+    // @RequestMapping(value = { "/wallet/buy/{username}" }, method = RequestMethod.POST)
+    // public void buyWalletEntry(@PathVariable("username") String username, @Valid Currency currency) {
+    // try {
+    // currency.setAmount(currency.getAmount() * currency.getUnit());
+    // walletService.buyCurrency(username, currency);
+    // } catch (Exception e) {
+    // }
+    // }
+    //
+    // @RequestMapping(value = { "/wallet/sell/{username}" }, method = RequestMethod.POST)
+    // public void sellWalletEntry(@PathVariable("username") String username, @Valid Currency currency) {
+    // try {
+    // walletService.sellCurrency(username, currency);
+    // } catch (Exception e) {
+    // }
+    // }
 
 }

@@ -1,8 +1,6 @@
-package com.futureprocessing.webtask.exchangeoffice.repository;
+package com.futureprocessing.webtask.exchangeoffice.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +13,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import com.futureprocessing.webtask.exchangeoffice.Application;
-import com.futureprocessing.webtask.exchangeoffice.model.Authorities;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
-import com.futureprocessing.webtask.exchangeoffice.model.Wallets;
-import com.futureprocessing.webtask.exchangeoffice.model.WalletsId;
 import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
@@ -29,10 +24,10 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
         TransactionalTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-@DatabaseSetup(UsersRepositoryTests.DATASET)
-@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = { UsersRepositoryTests.DATASET })
+@DatabaseSetup(UserServiceTests.DATASET)
+@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = { UserServiceTests.DATASET })
 @DirtiesContext
-public class UsersRepositoryTests {
+public class UserServiceTests {
 
     protected static final String DATASET = "classpath:datasets/users.xml";
 

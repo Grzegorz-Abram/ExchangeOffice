@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
 import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 
@@ -30,6 +27,7 @@ public class UserController {
     public Map<String, String> user(Principal principal) {
         Map<String, String> map = new LinkedHashMap<>();
         map.put("name", principal.getName());
+
         return map;
     }
 
@@ -39,6 +37,7 @@ public class UserController {
         if (users.isEmpty()) {
             return new ResponseEntity<List<Users>>(HttpStatus.NO_CONTENT);
         }
+
         return new ResponseEntity<List<Users>>(users, HttpStatus.OK);
     }
 
@@ -48,20 +47,19 @@ public class UserController {
         if (user == null) {
             return new ResponseEntity<Users>(HttpStatus.NOT_FOUND);
         }
+
         return new ResponseEntity<Users>(user, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/", method = RequestMethod.POST)
-    public ResponseEntity<Void> createUser(@RequestBody Users user, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Users> createUser(@RequestBody Users user) {
         if (userService.isUserExist(user)) {
-            return new ResponseEntity<Void>(HttpStatus.CONFLICT);
+            return new ResponseEntity<Users>(HttpStatus.CONFLICT);
         }
 
         userService.saveUser(user);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/user/{username}").buildAndExpand(user.getUsername()).toUri());
-        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<Users>(user, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
