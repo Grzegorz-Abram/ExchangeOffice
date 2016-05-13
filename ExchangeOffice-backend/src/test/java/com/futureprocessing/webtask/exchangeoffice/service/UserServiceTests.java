@@ -1,35 +1,41 @@
 package com.futureprocessing.webtask.exchangeoffice.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import com.futureprocessing.webtask.exchangeoffice.Application;
+import com.futureprocessing.webtask.exchangeoffice.PersistenceContext;
 import com.futureprocessing.webtask.exchangeoffice.model.Users;
 import com.futureprocessing.webtask.exchangeoffice.service.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.h2.tools.RunScript;
+import static org.h2.engine.Constants.UTF8;
 
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@DatabaseSetup(UserServiceTests.DATASET)
-@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = { UserServiceTests.DATASET })
+@ContextConfiguration(classes = PersistenceContext.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class,
+        DbUnitTestExecutionListener.class })
 @DirtiesContext
+@DatabaseSetup(UserServiceTests.DATASET_USERS)
+@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = { UserServiceTests.DATASET_USERS })
 public class UserServiceTests {
 
-    protected static final String DATASET = "classpath:datasets/users.xml";
+    protected static final String DATABASE_CREATE_SCRIPT = "classpath:db/datasets/users.xml";
+    protected static final String DATASET_USERS = "classpath:db/datasets/users.xml";
 
     private static final String FIRST_USER = "user1";
     private static final String SECOND_USER = "user2";
@@ -40,6 +46,11 @@ public class UserServiceTests {
 
     @Autowired
     private UserService userService;
+
+    @BeforeClass
+    public static void createSchema() throws Exception {
+        RunScript.execute("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1", "sa", "sa", "classpath:db/sql/create-db.sql", UTF8, false);
+    }
 
     @Test
     public void findAllUsers() {
